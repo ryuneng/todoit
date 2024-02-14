@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="host">
+
+	<!--모임 관리 현황-->
+	<select id="getHostStatus" parameterClass="int" resultClass="dto.MeetingStatusDto">
+		select
+			   count(*) 					meetingCnt,
+			   sum(meeting_total_pay_price) totalPrice,
+			   sum(meeting_actual_people) 	userCnt
+		from meeting
+		where user_no = #value#
+		and meeting_deleted = 'N'
+	</select>
+	
+	<!-- 모든 알림 조회 -->
+	<select id="getAllNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+	    SELECT no, imageName, title, day, alertType, nickname FROM (
+	        SELECT 
+	            m.meeting_no AS no,
+	            m.image_name AS imageName, 
+	            m.meeting_title AS title, 
+	            a.apply_applied_date AS day, 
+	            'APPLY' AS alertType,
+	            u.user_nickname AS nickname
+	        FROM    
+	            meeting m
+	            JOIN apply_users a ON m.meeting_no = a.meeting_no
+	            JOIN users u ON a.user_no = u.user_no
+	        WHERE   
+	            m.user_no = #value#
+	            AND a.apply_accepted = 'N'
+	        UNION
+	        SELECT
+	            m.meeting_no AS no,
+	            m.image_name AS imageName,
+	            m.meeting_title AS title,
+	            mr.meeting_reply_created_date AS day, 
+	            'REPLY' AS alertType,
+	            u.user_nickname AS nickname
+	        FROM  
+	            meeting m
+	            JOIN meeting_replies mr ON m.meeting_no = mr.meeting_no
+	            JOIN users u ON mr.user_no = u.user_no
+	        WHERE   
+	            m.user_no = #value#
+	    ) ORDER BY day desc
+	</select>
+	
+	<!--신청 알림 조회-->
+	<select id="getApplyNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select 
+				m.meeting_no 			as no,
+				m.image_name 			as imageName, 
+				m.meeting_title 		as title, 
+				a.apply_applied_date 	as day, 
+				'APPLY' 				as alertType,
+				u.user_nickname         as nickname
+		from    meeting m, apply_users a, users u
+
+		where   m.user_no = #value#
+		and     a.apply_accepted = 'N'
+		and     m.meeting_no = a.meeting_no
+		and     a.user_no = u.user_no
+		order by a.apply_applied_date DESC
+	</select>
+	<!--댓글 알림 조회-->
+	<select id="getReplyNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select
+				m.meeting_no as no,
+				m.image_name as imageName,
+				m.meeting_title as title,
+				mr.meeting_reply_created_date as day, 
+				'REPLY' as alertType,
+				u.user_nickname as nickname
+		from 	meeting m, meeting_replies mr, users u
+		where 	m.user_no = #value#
+		and 	m.meeting_no = mr.meeting_no
+		and     mr.user_no = u.user_no
+		order by mr.meeting_reply_created_date desc
+		
+	</select>
+	
+	<!-- 호스트 모임 달력 -->
+	<select id="getHostCalendar" parameterClass="int" resultClass="vo.Meeting">
+		 select
+		 		meeting_no  		as no,
+		 		meeting_title 		as title,
+		 		meeting_start_date 	as startDate,
+		 		meeting_end_date 	as endDate,
+		 	    meeting_address 	as address,
+		 	    meeting_latitude 	as latitude,
+		 	    meeting_longitude 	as longitude
+	 	from 	meeting
+	 	where 	user_no = #value#
+	    and meeting_deleted = 'N'
+	    and meeting_start_date >= to_date(to_char(sysdate, 'yyyy-mm') || '-01')
+    </select>
+ 	
+ 	<!-- 모임관리 참여자 조회 -->
+	<select id="getHostApplies" parameterClass="map" resultClass="dto.ApplyManagementDto">
+	    select
+	        u.user_nickname        as nickname,
+	        a.apply_no             as no,
+	        a.apply_accepted       as accepted,
+	        a.apply_applied_date   as appliedDate,
+	        a.apply_accepted_date  as acceptedDate
+	    from users u, apply_users a, meeting m 
+	    where m.meeting_no = #meetingNo#
+	    and a.meeting_no = m.meeting_no 
+	    and a.user_no = u.user_no
+	    <isNotNull property="nickname">
+	        and u.user_nickname = #nickname#
+	    </isNotNull>
+	    <isNotEmpty property="sta">
+	        <isEqual property="sta" compareValue="accepted">
+	            and a.apply_accepted = 'Y'
+	        </isEqual>
+	        <isEqual property="sta" compareValue="waiting">
+	            and a.apply_accepted = 'N'
+	        </isEqual>
+	    </isNotEmpty>
+	    <isEqual property="sta" compareValue="all">
+	    </isEqual>
+	</select>
+  	
+
+	 
+  	<!-- 모임관리 댓글-->
+  	<select id="getHostReplies" parameterClass="map" resultClass="dto.ReplyManagementDto">
+	select
+			mr.meeting_reply_no 		  as no,
+			u.files_name 				  as filename,
+			u.user_nickname 			  as nickname,
+			mr.meeting_reply_content	  as content,
+			mr.meeting_reply_created_date as createdDate,
+			mr.meeting_reply_updated_date as updatedDate
+	 from users u, meeting_replies mr
+	 where mr.meeting_no = #meetingNo#
+	 and u.user_no = #userNo#
+	 and u.user_no = mr.user_no
+ </select>
+</sqlMap>

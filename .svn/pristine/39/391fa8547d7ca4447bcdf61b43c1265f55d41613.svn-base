@@ -1,0 +1,25 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<style>
+footer{
+   bottom: 0px;
+   height: 5rem;
+}	
+</style>
+<div class="container">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <p class="col-md-4 mb-0 text-body-secondary">© 2024 TODOIT, 2307기 2조</p>
+
+    <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <img src="../resources/images/logo.png" height="60px" width="110px">
+    </a>
+
+    <ul class="nav col-md-4 justify-content-end">
+      <li class="nav-item"><a href="/" class="nav-link px-2 text-body-secondary">Home</a></li>
+      <li class="nav-item"><a href="/meeting/list.jsp" class="nav-link px-2 text-body-secondary">Meeting</a></li>
+      <li class="nav-item"><a href="/community/list.jsp" class="nav-link px-2 text-body-secondary">Community</a></li>
+      <li class="nav-item"><a href="/question/list.jsp" class="nav-link px-2 text-body-secondary">FAQs</a></li>
+      <li class="nav-item"><a href="https://www.notion.so/TODOIT-2e55b39331974cabade1b3bf7541edd5" class="nav-link px-2 text-body-secondary">About</a></li>
+    </ul>
+  </footer>
+</div>

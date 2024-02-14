@@ -1,0 +1,155 @@
+package vo;
+
+import java.util.Date;
+
+public class User {
+
+	
+	private int no;				// 유저번호
+	private String id;			// 아이디
+	private String password;	// 비밀번호
+	private Date birthDate;		// 생년월일
+	private String nickname;	// 닉네임
+	private String gender;		// 성별
+	private String status;		// 탈퇴여부
+	private String name;		// 이름
+	private String email;		// 이메일	
+	private String tel;			// 연락처
+	private Date createDate;	// 가입일자
+	private String content;		// 자기소개 내용
+	private Address Address;	// 주소
+	private String filename;	// 유저 대표이미지 파일명
+	private int point;		   	// 유저 보유 포인트
+
+	
+	public User() {}
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Date getBirthDate() {
+		return birthDate;
+	}
+
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getTel() {
+		return tel;
+	}
+
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Address getAddress() {
+		return Address;
+	}
+
+	public void setAddress(Address Address) {
+		this.Address = Address;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public int getPoint() {
+		return point;
+	}
+
+	public void setPoint(int point) {
+		this.point = point;
+	}
+
+	@Override
+	public String toString() {
+		return "User [no=" + no + ", id=" + id + ", password=" + password + ", birthDate=" + birthDate + ", nickname="
+				+ nickname + ", gender=" + gender + ", status=" + status + ", name=" + name + ", email=" + email
+				+ ", tel=" + tel + ", createDate=" + createDate + ", content=" + content + ", Address=" + Address
+				+ ", filename=" + filename + ", point=" + point + "]";
+	}
+
+}

@@ -1,0 +1,278 @@
+<%@page import="dto.ReplyManagementDto"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="vo.Meeting"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="dto.ApplyManagementDto"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.HostDao"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" ></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<jsp:include page="/include/navbar.jsp">
+	<jsp:param value="홈" name="menu"/>
+</jsp:include>
+<title>Insert title here</title>
+<style>
+  ul.comment-list {
+     list-style-type: none;
+     padding-left: 20px;
+ }
+
+  ul.comment-list li {
+     margin-bottom: 0px;
+     border-bottom: 1px solid #ccc; 
+     padding-bottom: 0px; 
+     background-color: #f0f0f0; 
+ }
+ 
+/*타이틀*/
+   .title {
+       width: 600px;
+       word-wrap: break-word; /* 긴 단어일 경우 강제로 줄바꿈 */
+   }
+</style>
+
+
+
+</head>
+<body>
+<%	
+	LoginUser loginUser = (LoginUser)session.getAttribute("LOGIN_USER");
+
+	int meetingNo = Integer.parseInt(request.getParameter("meetingNo"));
+	String sta = request.getParameter("sta");
+	if (sta == null) {
+		sta = "all";
+	}
+	String nickname = request.getParameter("nickname");
+	
+	
+	Map<String, Object> param = new HashMap<>();
+	param.put("sta", sta);
+	param.put("meetingNo", meetingNo);
+	if (nickname != null && !nickname.isBlank()){
+		param.put("nickname", nickname);
+	}
+	
+	// 미팅정보를 조회한다.
+	MeetingDao meetingDao = new MeetingDao();
+	Meeting meeting = meetingDao.getMeetingByNo(meetingNo);
+	
+	// 참여자 정보를 조회한다.
+	HostDao hostDao = new HostDao();
+	List<ApplyManagementDto> applyList = hostDao.getHostApplies(param);
+	
+	// 댓글 정보를 조회한다.
+	List<ReplyManagementDto> replyList = hostDao.getHostReplies(param);
+	
+%>					
+<div class="container" style="max-width: 900px">
+	<div class="row mb-3">
+		<div class="col-12">
+			<h3 class="best meeting category">
+	    		<i class="bi bi-people display-3" style="margin-right: 10px;"></i>
+	    			모임 관리 
+			</h3> 
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+
+			<div class="d-flex align-items-center">
+				<img src="/resources/images/meeting/<%=meeting.getImageName()%>" style="margin-right: 10px;" class="float-start" alt="..." width="150" height="150">
+				<span style="background-color: #6cb2e4; color: white; padding: 1px 8px; border-radius: 4px; margin-right: 20px;"><%=meeting.getStatus() %></span>
+	            <h4 class="title">
+	                <%=meeting.getTitle() %>
+	            </h4>
+			</div>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-12">
+			<h4>참여자 관리</h4>
+		</div>
+	</div>
+	<form id="form-status" method="get" action="managementDetail.jsp">
+		<input type="hidden" name="meetingNo" value="<%=meetingNo %>" />
+		<div class="row mb-1">
+			<div class="col-md-3">
+		        <select class="form-select" name="sta" onchange="changeSta()">
+		            <option value="all" selected>전체</option>
+		            <option value="accepted">참여확정</option>
+		            <option value="waiting">대기중</option>
+		        </select>
+			</div>
+		    <div class="col-md-3 ms-auto mb-3">
+		    	<div class="input-group">
+			    	<input type="search" class="form-control rounded" name="nickname" placeholder="닉네임 검색" aria-label="Search" aria-describedby="search-addon" />
+			   		<button type="submit" class="btn btn-outline-primary">검색</button>
+				</div>
+			</div>
+		</div>
+   	</form>
+   	<div class="row">
+   		<div class="col-12">
+			<table class="table table-bordered mb-5">
+				<colgroup>
+					<col width="10%">
+					<col width="23%">
+					<col width="15%">
+					<col width="15%">
+					<col width="25%">
+					<col width="12%">
+				</colgroup>
+			    <thead>
+			        <tr class="table-secondary">
+			            <th>순번</th>
+			            <th>닉네임</th>
+			            <th>신청일자</th>
+			            <th>승인일자</th>
+			            <th>신청상태</th>
+			            <th>비고</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+<%
+	if (applyList.isEmpty()) {
+%>
+			        <tr>
+			            <td colspan="6">참여자가 없습니다.</td>
+			         </tr>
+<%		
+	} else {
+		int count = 1;
+		for (ApplyManagementDto dto : applyList) {
+%>
+			        <tr>
+			            <td><%=count++ %></td>
+			            <td><%=dto.getNickname() %></td>
+			            <td><%=DateUtils.toText(dto.getAppliedDate()) %></td>
+			            <td><%=DateUtils.toText(dto.getAppliedDate()) %></td>
+			            <td>
+<%
+			if ("Y".equals(dto.getAccepted())) {
+%>
+							<span class="badge text-bg-success me-5">참여확정</span>
+			                <a href="" type="button" class="btn btn-outline-danger btn-sm">확정취소</a>
+<%
+			} else {
+%>
+							<span class="badge text-bg-secondary me-5">대기중</span>
+			                <a href="" type="button" class="btn btn-outline-success btn-sm">신청수락</a>
+<%
+			}
+%>			            
+			            </td>
+			         </tr>
+
+<%
+		}
+	}
+%>
+			    </tbody>
+			</table>
+   		</div>
+   	</div>
+	<hr>
+	<div class="row">
+		<div class="col-12">
+			<h4>댓글 관리</h4>
+		</div>
+   	</div>
+   	<div class="row">
+		<div class="col-12">
+   			<table class="table table-bordered mb-5">
+			    <thead>
+			        <tr class="table-secondary">
+			            <th scope="col" style="width: 2px;"><input type="checkbox"></th>
+			            <th>댓글</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        <!-- 댓글 추가 폼 -->
+			        <tr>
+			            <td>
+			            </td>
+			            <td>
+			                <div style="padding: 25px;" class="row">
+			                    <div class="col-sm-10">
+			                        <div class="d-flex align-items-center">
+			                            <img src="../resources/images/host/person.png" class="rounded-circle me-2" alt="..." width="55px" height="55px">
+			                            <textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력하세요."></textarea>
+			                        </div>
+			                    </div>
+			                    <div class="col-sm-2">
+			                        <button type="submit" class="btn btn-outline-primary">등록</button>
+			                    </div>
+			                </div>
+			            </td>
+			        </tr>
+<%
+for (ReplyManagementDto reply: replyList) {
+%>
+			        <!-- 댓글1 -->
+			        <tr>
+			            <td>
+			                <input type="checkbox">			              
+			            </td>
+			            <td>
+			                <div style="padding: 25px;" class="row">
+			                    <div class="d-flex align-items-center">
+			                        <img src="../resources/images/host/person.png" class="rounded-circle me-2" alt="..." width="55px" height="55px">
+			                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
+			                        <div class="d-flex align-items-start">
+			                            <h6 class="me-2"><%=reply.getNickname() %></h6>
+			                            <div class="d-flex flex-column">
+			                                <small class="me-2"><%=DateUtils.toText(reply.getCreatedDate())%></small>
+			                                <span><%=reply.getContent()%></span>
+			                                <small>댓글쓰기<i class="bi bi-chevron-down"></i></small>
+			                            </div>
+			                        </div>
+			                    </div>
+			                </div>
+							<!-- 대댓글 -->
+			               <ul class="comment-list">
+			            <li>
+			                <div style="padding: 25px;" class="row">
+			                    <div class="d-flex align-items-center">
+			                        <i class="bi bi-arrow-return-right"></i>
+			                        <img src="../resources/images/host/person.png" class="rounded-circle me-2" alt="..." width="55px" height="55px">
+			                        <div class="d-flex align-items-start">
+			                            <h6 class="me-2">김김</h6>
+			                            <div class="d-flex flex-column">
+			                                <small class="me-2">어제 오후 7:50</small>
+			                                <span>안녕하세요 대댓글입니다.</span>
+			                            </div>
+			                        </div>
+			                    </div>
+			                </div>
+			            </li>
+			        </ul>
+<%
+}
+%>
+			            </td>
+			        </tr>
+			    </tbody>
+			</table>
+		</div>
+   	</div>
+</div>
+<script type="text/javascript">
+	function changeSta() {
+		document.getElementById("form-status").submit();
+	} 
+</script>
+</body>
+</html>

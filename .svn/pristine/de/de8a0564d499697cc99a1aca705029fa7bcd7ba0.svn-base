@@ -1,0 +1,122 @@
+<%@page import="utils.DateUtils"%>
+<%@page import="java.util.List"%>
+<%@page import="vo.Meeting"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="org.apache.tomcat.jakartaee.commons.lang3.math.NumberUtils"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" ></script>
+<title>TODOIT :: 결제하기</title>
+</head>
+<body>
+<jsp:include page="/include/navbar.jsp">
+	<jsp:param value="community" name="menu"/>
+</jsp:include>
+<%
+	// 요청파라미터값 조회
+	int meetNo = NumberUtils.toInt(request.getParameter("meetNo"), 0);
+	
+	// meeting 관련 객체 생성
+	MeetingDao meetingDao = new MeetingDao();
+	Meeting meeting = meetingDao.getMeetingByNo(meetNo);
+%>
+<div class="container" style="width: 700px">
+	<div class="row">
+		<div class="col-12">
+			<form class="justify-content-start border-0 bg-white ms-3" method="post" action="payment.jsp">
+				<h4 class="fw-bold p-3 mb-3 mt-3">모임 정보</h4>
+				<!-- 모임 정보의 이미지~가격 부모 영역 -->
+				<div class="d-flex justify-content-start pb-3">
+					<!-- 이미지 영역 -->
+					<a href="/meeting/detail.jsp">
+						<img alt="참여하기 대표 이미지" src="/resources/images/meeting/<%=meeting.getImageName() %>"
+						     class="rounded mx-auto d-block img-thumbnail" width="200">
+					</a>
+					<!-- 지역~가격 부모 영역 -->
+					<div class="ms-5">
+						<small class="text-secondary"><%=meeting.getAddress() %></small>
+						<h6 class="fw-bold mt-1" style="display: -webkit-box;
+														overflow: hidden;
+													    text-overflow: ellipsis;
+													    -webkit-box-orient: vertical;
+													    -webkit-line-clamp: 1;">
+							<%=meeting.getTitle() %>
+						</h6>
+						<small><%=DateUtils.toTextKorean(meeting.getStartDate()) %> ~ <%=DateUtils.toTextKorean(meeting.getEndDate()) %></small>
+<%
+	if (meeting.getDiscountPrice() == 0) {
+%>
+						<p class="text-primary fw-bold mt-3"><%=meeting.getPrice() %>원</p>
+<%
+	} else {
+%>
+						<p class="text-secondary text-decoration-line-through mt-3 mb-1" style="font-size: 13px;"><%=meeting.getPrice() %>원</p>
+						<p class="text-primary fw-bold"><%=meeting.getDiscountPrice() %>원</p>
+<%
+	}
+%>
+					</div>
+				</div>
+				<!-- 모임정보 끝 -->
+				<hr>
+				<h4 class="fw-bold p-3 mb-3">안내사항</h4>
+				<div class="ms-3 pb-3">
+					<p>1. 집결 시간 꼭 지켜주세요.</p>
+					<p>2. 불가피한 사정으로 참여하지 못할 경우, 최소 2일 전 연락주세요.</p>
+					<p>3. 참여자 간에 기본적인 매너 지켜주세요!</p>
+				</div>
+				<hr>
+				<h4 class="fw-bold p-3 mb-3">결제수단</h4>
+				<div class="d-flex align-items-center ms-3 pb-4">
+					<input class="" type="radio" name="payMethod" value="카카오페이" checked>
+					<img src="/resources/images/payment/kakao_pay.png" class="ms-2" style="width:8%">
+					<label class="ms-2 fw-bold">카카오페이</label>
+				</div>
+				<hr>
+				<h4 class="fw-bold p-3 mb-1">포인트</h4>
+				<p class="ms-3 text-secondary text-start" style="font-size: 15px">보유 포인트 : 50000점</p>
+				<div class="form-group d-flex justify-content-start mb-3 ms-3 pb-3">
+					<input type="text" class="form-control" name="point" placeholder="0" style="width: 500px"/>
+					<button type="button" class="btn btn-primary ms-3" onclick=""> 사용</button>
+				</div>
+				<hr>
+				<div class="d-flex justify-content-between p-3">
+					<div>
+						<h6 class="text-secondary fw-bold">신청금액</h6>
+						<h6 class="text-secondary fw-bold">포인트 사용</h6>
+					</div>
+					<div class="text-end">
+<%
+	if (meeting.getPrice() == 0) {
+%>
+						<h6 class="text-secondary fw-bold"><%=meeting.getPrice() %>원</h6>
+<%
+	} else {
+%>
+						<h6 class="text-secondary fw-bold"><%=meeting.getDiscountPrice() %>원</h6>
+<%
+	}
+%>
+						<h6 class="text-secondary fw-bold">2,000점</h6>
+					</div>
+				</div>
+				<div class="d-flex justify-content-between p-3 mb-5">
+					<h4 class="fw-bold">총 결제금액</h4>
+					<h5 class="text-primary fw-bold">10,000원</h5>
+				</div>
+				<div class="text-center text-secondary mb-3" style="font-size: 15px">위 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
+				<div class="text-center">
+					<button type="submit" class="btn btn-primary mb-5" style="width: 100%">결제</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+</html>

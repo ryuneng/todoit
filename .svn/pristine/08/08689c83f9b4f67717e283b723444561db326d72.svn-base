@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="meeting" >
+
+	<insert id="insertMeeting" parameterClass="vo.Meeting">
+		insert into meeting
+		(MEETING_NO, MEETING_TITLE, MEETING_MAX_PEOPLE, MEETING_ADDRESS,
+		MEETING_PRICE, MEETING_DISCOUNT_PRICE, MEETING_START_DATE, MEETING_END_DATE, MEETING_CONTENT,
+		MEETING_APPROVE, MEETING_CATEGORY_NO, USER_NO, IMAGE_NAME, MEETING_LATITUDE, MEETING_LONGITUDE)
+		values
+		(meeting_seq.nextval, #title#, #maxPeople#, #address#,
+		#price#, #discountPrice#, #startDate#, #endDate#, #content#,
+		#approve#, #category.no#, #user.no#, #imageName#, 50, 50)
+	</insert>
+	
+	<select id="getMeetingByNo" parameterClass="int" resultClass="vo.Meeting">
+		select
+			M.MEETING_TITLE				as title,
+			M.MEETING_MAX_PEOPLE		as maxPeople,
+			M.MEETING_ACTUAL_PEOPLE		as actualPeople,
+			M.MEETING_ADDRESS			as address,
+			M.MEETING_PRICE				as price,
+			M.MEETING_DISCOUNT_PRICE	as discountPrice,
+			M.MEETING_START_DATE		as startDate,
+			M.MEETING_END_DATE			as endDate,
+			M.MEETING_CONTENT			as content,
+			M.MEETING_VIEW_CNT			as viewCnt,
+			M.MEETING_DELETED			as deleted,
+			M.MEETING_CREATED_DATE		as createdDate,
+			M.MEETING_UPDATED_DATE		as updatedDate,
+			M.MEETING_APPROVE			as approve,
+	        M.MEETING_CATEGORY_NO		as "category.no",
+	        C.MEETING_CATEGORY_NAME		as "category.name",
+	        U.USER_NO					as "user.no",
+	        U.USER_NICKNAME				as "user.nickname",
+	        M.IMAGE_NAME				as imageName,
+	        M.WISH_CNT					as wishCnt,
+	        M.SCORE_AVERAGE				as scoreAverage,	
+	        M.MEETING_FULL				as full,
+	        M.MEETING_LATITUDE			as latitude,
+	        M.MEETING_LONGITUDE			as longitude
+		from
+			MEETING M, USERS U, MEETING_CATEGORIES C
+		where
+			M.MEETING_NO = #value#
+		and M.USER_NO = U.USER_NO
+		AND M.MEETING_CATEGORY_NO = C.MEETING_CATEGORY_NO
+	</select>
+	
+	<update id="updateMeetingByNo" parameterClass="vo.Meeting">
+		update MEETING
+		set
+			MEETING_TITLE = #title#,
+			MEETING_content = #content#,
+			board_deleted = #deleted#,
+			board_updated_date = sysdate
+		where
+			board_no = #no#
+	</update>
+</sqlMap>

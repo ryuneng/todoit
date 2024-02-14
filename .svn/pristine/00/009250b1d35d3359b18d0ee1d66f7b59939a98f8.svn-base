@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="comm-replies">
+	
+	<insert id="insertCommReply" parameterClass="vo.CommReply">
+		insert into comm_replies
+    		(comm_reply_no, comm_reply_content, comm_no, user_no)
+		values
+    		(COMM_REPLIES_NO_SEQ.nextval, #content#, #community.no#, #user.no#)
+	</insert>
+	
+	<select id="getRepliesByCommunityNo" parameterClass="int" resultClass="vo.CommReply">
+		select
+    		A.comm_reply_no 			as no, 
+    		A.comm_reply_content		as content,
+    		A.comm_reply_deleted        as deleted,
+    		A.comm_reply_created_date   as createdDate,
+    		A.comm_reply_updated_date   as updatedDate,
+    		A.comm_danger_count         as dangerCnt,
+    		A.user_no 				    as "user.no",
+    		B.user_nickname			    as "user.nickname"
+		from
+    		comm_replies A,
+    		users B
+		where
+    		A.comm_no = #value#
+    		and A.user_no = B.user_no
+    		and A.comm_reply_deleted = 'N'
+		order by
+     		A.comm_reply_no asc
+	</select>
+	
+	<update id="deleteCommReply" parameterClass="int">
+		update
+			comm_replies
+		set
+			comm_reply_deleted = 'Y'
+		where
+			comm_reply_no=#no#
+	</update>
+	
+</sqlMap>

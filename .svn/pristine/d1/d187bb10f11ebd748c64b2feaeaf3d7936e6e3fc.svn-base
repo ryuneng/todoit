@@ -1,0 +1,31 @@
+<%@page import="dto.LoginUser"%>
+<%@page import="org.apache.commons.codec.digest.DigestUtils"%>
+<%@page import="vo.User"%>
+<%@page import="dao.UserDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+
+<%
+String id = request.getParameter("id");
+String password = request.getParameter("password");
+
+
+UserDao userDao = new UserDao();
+
+User savedUser = userDao.getUserById(id);
+
+if (savedUser == null) {
+	response.sendRedirect("loginform.jsp?error=fail");
+	return;
+
+}
+String shapassword = DigestUtils.sha256Hex(password);
+if( !savedUser.getPassword().equals(password)){
+	response.sendRedirect("loginfom.jsp?error=falil;");
+	return;
+}
+
+	LoginUser loginUser = new LoginUser();
+	loginUser.setNo(savedUser.getNo());
+	loginUser.setId(savedUser.getId());
+	loginUser.setName(savedUser.getName());
+%>

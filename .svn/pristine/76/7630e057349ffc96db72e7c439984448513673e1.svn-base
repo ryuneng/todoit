@@ -1,0 +1,236 @@
+<%@page import="dao.AddressDao"%>
+<%@page import="vo.Address"%>
+<%@page import="dao.UserDao"%>
+<%@page import="vo.Address"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.AddressDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<meta charset="UTF-8">
+<title>회원가입</title>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+		
+		<%
+		UserDao userdao = new UserDao();
+		AddressDao addressDao = new AddressDao();
+		
+		List<Address> sidoList = addressDao.getAddressByCityName();
+		List<Address> guList = addressDao.getAddressByguName(100);
+		
+		%>
+         
+			<h1>회원가입</h1>
+			<form class="border bg-light p-3"
+            	method="post"
+            	action="register.jsp"
+            	enctype="multipart/form-data">
+            	<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">아이디</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="id" >
+    					<div id="id-feedback" class="form-text" ></div>
+    					<button type="button" class="btn btn-primary btn-sm" onclick="checkId()">중복체크</button>
+  					</div>
+				</div>
+            	<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">비밀번호</label>
+  					<div class="col-sm-8">
+    					<input type="password" class="form-control form-control-sm" name="password">
+  					</div>
+				</div>
+            	<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">비밀번호확인</label>
+  					<div class="col-sm-8">
+    					<input type="password" class="form-control form-control-sm" name="password">
+  					</div>
+  				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">이름</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="name" >
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">이메일</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="email" >
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">전화번호</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="tel" >
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm"> 닉네임</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="nickname" >
+    					<div id="nickname-feedback" class="form-text" ></div>
+    					<button type="button" class="btn btn-primary btn-sm" onclick="checknickname()">중복체크</button>
+  					</div>
+				</div>
+			<div class="row mb-3">
+                 <label class="col-sm-2 col-form-label col-form-label-sm">생년월일</label>
+                 <div class="col-sm-8">
+                 	<input type="date" class="form-control form-control-sm" name="birthDate">
+             	</div>
+             	</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">성별</label>
+  					<div class="col-sm-8">
+    					<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox"  value="M" name="gender">
+							<label class="form-check-label" for="inlineCheckbox1">남자</label>
+						</div>
+    					<div class="form-check form-check-inline">
+							<input class="form-check-input" type="checkbox"  value="F" name="gender">
+							<label class="form-check-label" for="inlineCheckbox1">여자</label>
+						</div>
+  					</div>
+				</div>
+				
+				
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">주소</label>
+  					<div class="col-sm-8">
+    					<select class="form-select" name="sidoNo" onchange ="guName()">
+    			<%
+    					for(Address sido : sidoList){
+    			%>
+    						<option value="<%=sido.getNo()%>"><%=sido.getCity_name() %> </option>
+    			<% 
+    					}
+    			%>
+    				
+    					</select>
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">주소2</label>
+  					<div class="col-sm-8">
+    					<select class="form-select" name="guNo">
+  			<%
+  				 for(Address gu : guList) {
+  					 
+  			%>
+  					<option value="<%=gu.getNo() %>"><%=gu.getGu_name() %></option>
+  			<%
+  				 }
+  			%>
+    					</select>
+  					</div>
+				</div>
+				
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">자기소개</label>
+  					<div class="col-sm-8">
+    					<input type="text" class="form-control form-control-sm" name="content" >
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm">사진</label>
+  					<div class="col-sm-8">
+    					<input type="file" class="form-control form-control-sm" name="upfile" >
+  					</div>
+				</div>
+				<div class="row mb-3">
+  					<label class="col-sm-2 col-form-label col-form-label-sm"></label>
+  					<div class="col-sm-8">
+    					<a href="" class="btn btn-secondary">취소</a>
+               			<button type="submit" class="btn btn-primary">가입</button>
+  					</div>
+  				</div>
+          	</form>
+		</div>
+	</div>
+</div>
+</body>
+
+<script type="text/javascript">
+function checkId(){
+	
+	// 0. 아이디 입력필드를 선택한다.
+	let element = document.querySelector("input[name=id]");
+	// 1. 입력한 아이디 값을 조회한다.
+	let userId = element.value;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState==4 && xhr.status==200) {
+			let text=xhr.responseText;
+			if(text =="none") {
+				document.getElementById("id-feedback").textContent="사용가능한 아이디 입니다."
+				
+			}else if(text =="exist") {
+				document.getElementById("id-feedback").textContent="이미 사용중인 아이디입니다."
+			}
+		}
+	}
+	xhr.open("GET","checkId.jsp?id=" + userId);
+	xhr.send();
+}
+
+function checknickname(){
+// 닉네임 중복체크
+	let element = document.querySelector("input[name=nickname]");
+	let usernickname = element.value;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function () {
+		if(xhr.readyState==4 && xhr.status==200) {
+			let text=xhr.responseText;
+			if(text=="none") {
+				document.getElementById("nickname-feedback").textContent="사용가능한 닉네임 입니다."
+				
+			}else if(text =="exist") {
+				document.getElementById("nickname-feedback").textContent="이미 사용중인 닉네임입니다."
+			}
+		}
+	}
+	xhr.open("GET","checknickname.jsp?nickname=" + usernickname);
+	xhr.send();
+	
+}
+	
+	
+function guName(){
+	let selectSidoNo = document.querySelector("select[name=sidoNo]").value;
+	
+	let xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		
+		if (xhr.readyState == 4 && xhr.status == 200) { 
+
+			let text = xhr.responseText;
+			let arr = JSON.parse(text);
+			
+			let content = "";
+			for (let index = 0; index < arr.length; index++) {
+				let item = arr[index];
+
+				let option = `
+					<option value=\${item.no}> \${item.gu_name}</option>
+				`;
+				content += option;
+			}
+			document.querySelector("select[name=guNo]").innerHTML = content;
+		}
+	}
+	xhr.open("GET", "/info/gulist.jsp?no=" + selectSidoNo);
+	xhr.send();
+}		
+</script>
+</html>

@@ -1,0 +1,58 @@
+<%@page import="dao.MeetingDao"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="java.time.LocalDateTime"%>
+<%@page import="java.util.Date"%>
+<%@page import="vo.Meeting"%>
+<%@page import="vo.User"%>
+<%@page import="org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory"%>
+<%@page import="vo.MeetingCategory"%>
+<%@page import="utils.StringUtils"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+ 	LoginUser loginuser = (LoginUser) session.getAttribute("LOGIN_USER");
+	System.out.println(loginuser);
+	
+	String title = request.getParameter("title");
+	int catNo = NumberUtils.toInt(request.getParameter("catNo"));
+	int maxPeople = NumberUtils.toInt(request.getParameter("maxPeople"));
+	String address = request.getParameter("address");
+	int price = NumberUtils.toInt(request.getParameter("price"));
+	int discountPrice = NumberUtils.toInt(request.getParameter("discountPrice"));
+	
+	Date startDate = DateUtils.toDate(request.getParameter("startDate"));
+	Date endDate =  DateUtils.toDate(request.getParameter("endDate"));
+	String content = StringUtils.withBr(request.getParameter("content"));
+	String approve = request.getParameter("approve");
+	
+	MeetingCategory category = new MeetingCategory();
+	category.setNo(catNo);
+	
+	User user = new User();
+	user.setNo(loginuser.getNo());
+	
+	String imageName = "../resources/images/meeting/user_1077114.png";
+	
+	Meeting meeting = new Meeting();
+	meeting.setTitle(title);
+	meeting.setMaxPeople(maxPeople);
+	meeting.setAddress(address);
+	meeting.setPrice(price);
+	meeting.setDiscountPrice(discountPrice);
+	meeting.setStartDate(startDate);
+	meeting.setEndDate(endDate);
+	meeting.setContent(content);
+	meeting.setApprove(approve);
+	meeting.setCategory(category);
+	meeting.setUser(user);
+	meeting.setImageName(imageName);
+	
+	MeetingDao meetingDao = new MeetingDao();
+	meetingDao.insertMeeting(meeting);
+	
+	response.sendRedirect("list.jsp");
+	
+	
+%>

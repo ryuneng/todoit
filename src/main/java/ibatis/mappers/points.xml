@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="points" >
+	<!-- 포인트 히스토리 생성에 필요한 orderNo 조회 -->
+	<select id="getOrderNoByApplyNo" parameterClass="int" resultClass="int">
+		select order_no
+		from payments
+		where apply_no = #applyNo#
+	</select>
+	
+	<!-- 포인트 히스토리 생성 -->
+	<insert id="insertPointsHistory" parameterClass="vo.PointHistory">
+		insert into points_history
+		(history_no, user_no, used_point, order_no)
+		values
+		(points_history_seq.nextval, #user.no#, #usedPoint#, #orderNo#)
+	</insert>
+
+	<!-- 유저 보유포인트 조회
+		* parameterClass : 아래 SQL 구문의 #value#로 전달받는 값의 타입 = PaymentDao > getPointByUserNo 메소드 > userNo 파라미터의 타입
+		* resultClass : 아래 SQL 구문을 통해 조회 후 전달해줄 값의 타입 = PaymentDao > getPointByUserNo 메소드의 타입
+	-->
+	<select id="getPointByUserNo" parameterClass="int" resultClass="int">
+		select user_point
+        from users
+        where user_no = #value#
+	</select>
+	
+	<!-- 포인트 히스토리 전체조회 -->
+	<select id="getPointsHistory" parameterClass="int" resultClass="vo.PointHistory">
+	select
+		user_no      as "user.no",
+		used_point   as usedPoint,
+		saved_point  as savedPoint,
+		created_date as createdDate,
+		order_no     as orderNo
+	from
+		points_history
+	where
+		user_no = #userNo#
+	order by history_no desc
+	</select>
+</sqlMap>

@@ -1,0 +1,33 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Community;
+import vo.Meeting;
+
+public class CommunityDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	public void insertCommunity(Community community) throws SQLException {
+		ibatis.insert("community.insertCommunity", community);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getAllMeetingsByUserNo(int userNo) throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("community.getAllMeetingsByUserNo", userNo);
+	}
+	
+	public Community getCommunityByNo(int commNo) throws SQLException {
+		return (Community) ibatis.queryForObject("community.getCommunityByNo", commNo);
+	}
+	
+	public void updateCommunity(Community community) throws SQLException {
+		ibatis.update("community.updateCommunity", community);
+	}
+	
+}

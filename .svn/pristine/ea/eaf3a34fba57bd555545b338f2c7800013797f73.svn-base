@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="follow">
+
+	<!-- 팔로우 추가 -->
+	<insert id="addFollow" parameterClass="vo.Follow">
+		insert into follows
+		(user_owner, user_follower)
+		values
+		(#userOwner.no#, #userFollower.no#)
+	</insert>
+	
+	<!-- 팔로우 취소 -->
+	<delete id="deleteFollow" parameterClass="vo.Follow">
+		delete from	follows
+		where
+			user_owner = #userOwner.no#
+			and user_follower = #userFollower.no#
+	</delete>
+	
+	<!-- 팔로워수 조회(나를 팔로우한 사람들), 프로필 기준 -->
+	<select id="getFollowerCnt" parameterClass="int" resultClass="int">
+		select count(*)
+		from follows
+		where user_owner = #userNo#
+	</select>
+	
+	<!-- 팔로잉수 조회(내가 팔로우한 사람들), 프로필 기준 -->
+	<select id="getFollowingCnt" parameterClass="int" resultClass="int">
+		select count(*)
+		from follows
+		where user_follower = #userNo#
+	</select>
+	
+</sqlMap>

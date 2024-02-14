@@ -1,0 +1,62 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.CommReply;
+import vo.MeetingReply;
+
+public class MeetingReplyDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+
+	// 신규 모임 댓글 추가
+	public void insertMeetingReply(MeetingReply meetingReply) throws SQLException {
+		ibatis.insert("meeting-replies.insertMeetingReply", meetingReply);
+	}
+	
+	// 신규 모임 대댓글 추가
+	public void insertMeetingReReply(MeetingReply meetingReply) throws SQLException {
+		ibatis.insert("meeting-replies.insertMeetingReReply", meetingReply);
+	}
+	
+	// 해당 모임에 대한 전체 모임 댓글 조회
+	@SuppressWarnings("unchecked")
+	public List<MeetingReply> getMeetingReplies(int no) throws SQLException {
+		return (List<MeetingReply>) ibatis.queryForList("meeting-replies.getMeetingReplies", no);
+	}
+	
+	//해당 댓글에 대한 전체 대댓글 조회
+	@SuppressWarnings("unchecked")
+	public List<MeetingReply> getReReplies(int no) throws SQLException {
+		return (List<MeetingReply>) ibatis.queryForList("meeting-replies.getReReplies", no);
+	}
+	
+	// 모임 댓글 삭제여부 'Y'로 변경
+	public void deleteMeetingReply(int no) throws SQLException {
+		ibatis.update("meeting-replies.deleteMeetingReply", no);
+	}
+	
+	// 댓글 수정
+	public void updateMeetingByNo(MeetingReply meetingReply) throws SQLException {
+		ibatis.update("meeting-replies.updateMeetingByNo", meetingReply);
+	}
+	
+	// 댓글 번호로 댓글 정보 조회
+	public MeetingReply getReplyByNo(int no) throws SQLException {
+		return (MeetingReply) ibatis.queryForObject("meeting-replies.getReplyByNo", no);
+	}
+	
+	// 댓글 신고 횟수 반영
+	public void updateDangerCnt(MeetingReply meetingReply) throws SQLException {
+		ibatis.update("meeting-replies.updateDangerCnt", meetingReply);
+	}
+	
+	// 신고된 댓글 번호, 신고한 유저 저장
+	public void addMeetReplyDangerCnt(meetingre ) throws SQLException {
+		ibatis.update("meeting-replies.addMeetReplyDangerCnt", meetingReply);
+	}
+}

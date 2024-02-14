@@ -1,0 +1,30 @@
+<%@page import="vo.Meeting"%>
+<%@page import="vo.User"%>
+<%@page import="dao.WishDao"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Wish"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	// 요청파라미터값 조회
+	int no = Integer.valueOf(request.getParameter("no"));
+
+	User user = new User();
+	user.setNo(100010);
+	
+	Meeting meeting = new Meeting();
+	meeting.setNo(no);
+	MeetingDao meetingDao = new MeetingDao();
+	meetingDao.updateMeetingWishByNo(meeting);
+	
+	WishDao wishDao = new WishDao();
+	
+	Wish wish = new Wish();
+	
+	wish.setMeeting(meeting);
+	wish.setUser(user);
+	
+	wishDao.addWish(wish);
+	
+	response.sendRedirect("detail.jsp?no=" + no);
+%>

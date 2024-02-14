@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="users">
+
+	<insert id="insertUser" parameterClass="vo.User">
+		insert into users
+		(user_no, user_id, user_password, user_birthDate, user_nickname, user_gender,
+		 user_status, user_name, user_email, user_tel, user_createDate, user_content,
+		 address_no, files_name)
+		values
+		(users_seq.nextval, #id#, #password#, #birthDate#, #nickname#, #gender#, #status#, #name#,
+		 #email#, #tel#, sysdate, #content#, #Address.no#, #filename#)
+
+	</insert>
+
+	<select id="getUserById" parameterClass="string" resultClass="vo.User">
+		select
+			a.user_no 				as no,
+			a.user_id				as id,
+			a.user_password			as password,
+            a.user_birthdate		as birthDate,
+			a.user_nickname			as nickname,
+			a.user_gender			as gender,
+			a.user_status			as status,
+			a.user_name				as name,
+			a.user_email			as email,
+			a.user_tel				as tel,
+			a.user_createdate	    as createDate,
+			a.user_content			as content,
+			b.address_no			as "address.no",
+			b.city_name				as "address.city_name",
+			b.gu_name				as "address.gu_name",
+			b.address_no2			as "address.address_no2",
+			a.files_name			as filename
+
+		from
+			users a, addresses b
+		where
+			user_id= #value#
+            and
+            a.address_no = b.address_no
+	</select>
+
+	<!-- 유저번호로 유저정보 검색 -->
+	<select id="getUserByNo" parameterClass="int" resultClass="vo.User">
+		select
+			a.user_no 				as no,
+			a.user_id				as id,
+			a.user_password			as password,
+            a.user_birthdate		as birthDate,
+			a.user_nickname			as nickname,
+			a.user_gender			as gender,
+			a.user_status			as status,
+			a.user_name				as name,
+			a.user_email			as email,
+			a.user_tel				as tel,
+			a.user_createdate	    as createDate,
+			a.user_content			as content,
+			b.address_no			as "address.no",
+			b.city_name				as "address.city_name",
+			b.gu_name				as "address.gu_name",
+			b.address_no2			as "address.address_no2",
+			a.files_name			as filename,
+			a.user_point			as point
+		from
+			users a, addresses b
+		where
+			user_no= #value#
+            and
+            a.address_no = b.address_no
+	</select>
+
+	<update id="deleteUserByNo" parameterClass="int">
+		update
+			users
+		set
+			USER_STATUS = 'N'
+		where
+			user_no=#value#
+	</update>
+
+	<select id="getUserByNickname" parameterClass="string" resultClass="vo.User">
+		select
+			user_no 			as no,
+			user_id 			as id,
+			user_password 		as password,
+			user_birthDate      as birthDate,
+			user_gender         as gender,
+			user_status			as status,
+			user_name 			as name,
+			user_email 			as email,
+			user_tel 			as tel,
+			user_createDate 	as createDate,
+			user_content 		as content,
+			address_no 			as address_no,
+			files_name     		as files_name
+		from
+			users
+		where
+			user_nickname = #value#
+	</select>
+	<select id="getUserByEmail" parameterClass="string" resultClass="vo.User">
+		select
+			user_no 			as no,
+			user_id 			as id,
+			user_password 		as password,
+			user_birthDate      as birthDate,
+			user_gender         as gender,
+			user_status			as status,
+			user_name 			as name,
+			user_email 			as email,
+			user_tel 			as tel,
+			user_createDate 	as createDate,
+			user_content 		as content,
+			address_no 			as address_no,
+			files_name     		as files_name
+		from
+			users
+		where
+			user_email = #value#
+	</select>
+
+	<update id="updateUser" parameterClass="vo.User">
+		update
+			Users
+		set
+			user_id	= #id#,
+			user_password = #password#,
+			user_name = #name#,
+			user_nickname = #nickname#,
+			user_birthdate = #birthDate#,
+			user_gender = #gender#,
+			user_email = #email#,
+			user_tel = #tel#,
+			address_no = #address.no#,
+			user_content = #content#,
+			user_point = #point#,
+			files_name = #filename#
+		where
+			user_no = #no#
+	</update>
+
+	<!-- 유저번호로 참여모임 조회하기 -->
+	<select id="getMeetListByNo" parameterClass="map" resultClass="vo.ApplyUser">
+		select
+			user_no                     as no,
+		    meeting_no					as "meeting.no",
+		    meeting_title				as "meeting.title",
+            meeting_start_date			as "meeting.startDate",
+		    meeting_end_date			as "meeting.endDate",
+		    meeting_address				as "meeting.address",
+            apply_accepted				as accepted,
+		    meeting_max_people			as "meeting.maxPeople",
+		    meeting_actual_people		as "meeting.actualPeople",
+		    meeting_price				as "meeting.price",
+		    meeting_discount_price		as "meeting.discountPrice"
+		from
+		    (select row_number() over (order by m.meeting_no desc) num,
+		        a.user_no,
+	            m.meeting_no,
+	            m.meeting_title,
+	            m.meeting_start_date,
+	            m.meeting_end_date,
+	            m.meeting_address,
+	            m.meeting_max_people,
+	            m.meeting_actual_people,
+	            m.meeting_price,
+	            m.meeting_discount_price,
+	            a.apply_accepted
+	  	 	 from
+	            meeting m, apply_users a
+	   		 where
+	            m.meeting_deleted = 'N'
+	            and m.meeting_no = a.meeting_no
+	            and a.user_no = #userNo#)
+		where
+		    num between #begin# and #end#
+
+	</select>
+
+	<!-- 유저번호로 참여모임 총 갯수 조회하기 -->
+	<select id="getMeetingTotalRows" parameterClass="int" resultClass="int">
+		select
+		   count(*)
+		from
+		    meeting m, apply_users a
+		where
+		    m.meeting_no = a.meeting_no
+		and a.user_no = #no#
+
+	</select>
+
+	<select id="getWishListByNo" parameterClass="map" resultClass="vo.Wish">
+		select
+			user_no                     as "user.no",
+		    meeting_no					as "meeting.no",
+		    meeting_title				as "meeting.title",
+            meeting_start_date			as "meeting.startDate",
+		    meeting_end_date			as "meeting.endDate",
+		    meeting_address				as "meeting.address",
+		    meeting_max_people			as "meeting.maxPeople",
+		    meeting_actual_people		as "meeting.actualPeople",
+		    meeting_price				as "meeting.price",
+		    meeting_discount_price		as "meeting.discountPrice"
+		from
+		    (select row_number() over (order by m.meeting_no desc) num,
+		        w.user_no,
+	            m.meeting_no,
+	            m.meeting_title,
+	            m.meeting_start_date,
+	            m.meeting_end_date,
+	            m.meeting_address,
+	            m.meeting_max_people,
+	            m.meeting_actual_people,
+	            m.meeting_price,
+	            m.meeting_discount_price
+     	 from
+	            meeting m, wishes w
+	   		 where
+	            m.meeting_deleted = 'N'
+	            and m.meeting_no = w.meeting_no
+	            and w.user_no = #userNo#)
+		where
+		    num between #begin# and #end#
+
+	</select>
+
+	<!-- 유저번호로 유저 찜 목록갯수 조회 -->
+	<select id="getWishTotalRows" parameterClass="int" resultClass="int">
+		select
+		   count(*)
+		from
+		    meeting m, wishes w
+		where
+		    m.meeting_no = w.meeting_no
+		and w.user_no = #no#
+
+	</select>
+
+
+
+</sqlMap>

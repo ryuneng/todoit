@@ -1,0 +1,29 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.User;
+
+public class UserDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	
+	/**
+	 * 유저아이디로 유저정보를 반환한다.
+	 * @param id 유저아이디
+	 * @return
+	 * @throws SQLException
+	 */
+	public User getUserById(String id) throws SQLException {
+		User user = (User) ibatis.queryForObject("users.getUserById", id);
+		return user;
+	}
+	
+
+	
+ 
+}

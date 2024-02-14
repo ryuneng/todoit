@@ -1,0 +1,28 @@
+<%@page import="vo.Community"%>
+<%@page import="dao.CommunityDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+
+	// LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER"); // 로그인 유저
+	
+	int commNo = Integer.parseInt(request.getParameter("commNo"));
+	// int currentPage = Integer.parseInt(request.getParameter("page")); // 돌아갈 페이지번호
+	
+	CommunityDao commDao = new CommunityDao();
+	Community savedCommunity = commDao.getCommunityByNo(commNo);
+	
+/* 	
+	커뮤니티 작성자와 로그인한 유저 번호가 다르면 해당 커뮤니티 글상세로 이동
+	if (savedCommunity.getUser().getNo() != loginUser.getNo()) {
+		response.sendRedirect("detail.jsp?commNo=" + commNo);
+		return;
+	} 
+*/
+
+	savedCommunity.setDeleted("Y");
+	commDao.updateCommunity(savedCommunity);
+	
+	response.sendRedirect("mainList.jsp"); // 돌아갈 페이지 번호 추가하기
+	
+%>

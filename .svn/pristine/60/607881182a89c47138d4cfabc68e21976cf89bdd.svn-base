@@ -1,0 +1,45 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.CommReply;
+import vo.MeetingReply;
+
+public class MeetingReplyDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+
+	public void insertMeetingReply(MeetingReply meetingReply) throws SQLException {
+		ibatis.insert("meeting-replies.insertMeetingReply", meetingReply);
+	}
+	
+	public void insertMeetingReReply(MeetingReply meetingReply) throws SQLException {
+		ibatis.insert("meeting-replies.insertMeetingReReply", meetingReply);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MeetingReply> getMeetingReplies(int no) throws SQLException {
+		return (List<MeetingReply>) ibatis.queryForList("meeting-replies.getMeetingReplies", no);
+	}
+	
+	public void deleteMeetingReply(int no) throws SQLException {
+		ibatis.update("meeting-replies.deleteMeetingReply", no);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MeetingReply> getReReplies(int no) throws SQLException {
+		return (List<MeetingReply>) ibatis.queryForList("meeting-replies.getReReplies", no);
+	}
+	
+	public void updateMeetingByNo(MeetingReply meetingReply) throws SQLException {
+		ibatis.update("meeting-replies.updateMeetingByNo", meetingReply);
+	}
+	
+	public MeetingReply getReplyByNo(int no) throws SQLException {
+		return (MeetingReply) ibatis.queryForObject("meeting-replies.getReplyByNo", no);
+	}
+}

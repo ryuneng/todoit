@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="wishes">
+	<insert id="addWish" parameterClass="vo.wish">
+		insert into wishes
+		(meeting_no, user_no)
+		values
+		(#meeting.no#, #user.no#)
+	</insert>
+	
+	<delete id="deleteWish" parameterClass="vo.wish">
+		delete from wishes
+		where meeting_no = #meeting.no#
+		and user_no = #user.no#
+	</delete>
+</sqlMap>

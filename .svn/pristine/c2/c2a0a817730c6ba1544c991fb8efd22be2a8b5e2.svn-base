@@ -1,0 +1,223 @@
+ <%@page import="vo.CommReply"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.CommReplyDao"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="vo.Community"%>
+<%@page import="dao.CommunityDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://kit.fontawesome.com/bdbabb79d8.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<title>TODOIT::커뮤니티 상세</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="community" name="manu"/>
+</jsp:include>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h3 class="mt-3">게시글 상세</h3>
+<%
+	// LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	// int commNo = Integer.parseInt(request.getParameter("no"));
+	
+	CommunityDao commDao = new CommunityDao();
+	
+	// Community community = commDao.getCommunityByNo(commNo);
+	Community community = commDao.getCommunityByNo(100003);
+%>
+			<div class="d-flex justify-content-end mb-3">
+				<a href="modifyform.jsp?commNo=100003" class="btn btn-warning me-1">수정</a>
+				<a href="delete.jsp?commNo=100003" class="btn btn-danger">삭제</a>
+			</div>
+			<h4 class="mt-3 mb-3"><%=community.getTitle() %></h4>
+		</div>
+		<hr>
+	</div>
+	
+	<!-- 작성자 정보 - 프로필 사진, 작성일, 조회수 -->	
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-start mb-3">
+				<a href="">
+					<img src="../resources/images/user/user_1077114.png" width="50" height="50">
+				</a>
+				<div class="ms-3">
+					<span><%=community.getUser().getNickname() %></span>
+					<div class="d-flex justify-content-between">
+	    				<span><%=DateUtils.toText(community.getCreatedDate()) %></span>
+			    		<span class="ms-3">조회수 <%=community.getViewCnt() %></span>
+	  				</div>
+	  			</div>
+			</div>
+		</div>
+		<hr>
+	</div>
+	
+	<div class="row mt-3 mb-3">
+		<div class="col-12">
+			<div class="card">
+	  			<div class="card-body">
+  					<h6 class="card-title"><%=community.getMeeting().getTitle() %></h6>
+    				<p class="card-text"><%=community.getMeeting().getAddress() %></p>
+    				<a href="../meeting/detail.jsp?meetNo=<%=community.getMeeting().getNo() %>" class="card-link">모임보기</a>
+	  			</div>
+	  		</div>
+		</div>
+  	</div>
+  	
+  	<div class="row mt-3 mb-3">
+  		<div class="col-12">
+  			<span>평점 : 
+	  			<i class="fa-solid fa-star"></i>
+  			</span>
+  	</div>
+  	
+  	<div class="row mt-3">
+  		<div class="col-3">
+  			<img src="../resources/images/community/<%=community.getImageName() %>" class="img-thumbnail">  			
+  		</div>  		
+  		<div class="col-9">
+			<div class="p-3 mb-3">
+				<p><%=community.getContent() %></p>
+			</div>
+  		</div>
+  		</div>
+  	</div>
+	
+  	<div class="row mt-5 mb-3">  	
+  	 	<div class="col-12">
+  	 		<div class="text-center">
+				<a href="" class="btn btn-outline-secondary btn-sm">좋아요 <span class="badge  text-bg-success"><%=community.getLikeCnt() %></span></a>
+				<a class="btn btn-outline-success btn-sm">공유하기 <i class="bi bi-share"></i></a>
+			</div>
+		</div>
+	</div>
+  	<hr>
+  	
+	<div class="row">
+		<div class="col-12">
+		<h5>댓글</h5>
+		<form class="border bg-light p-3 mb-3" method="post" action="insertCommReply.jsp">
+			<input type="hidden" name="commNo" value="100003">
+	   <!-- <input type="hidden" name="page" value="">-->
+				<div class="row mb-3">
+					<div class="col-sm-11">
+						<textarea rows="2" class="form-control" name="content">댓글을 입력해주세요.</textarea>
+					</div>
+					<div class="col-sm-1">
+						<button type="submit" class="btn btn-outline-primary" >등록</button>
+  					</div>
+				</div>
+		</form>
+		
+<%
+	CommReplyDao replyDao = new CommReplyDao();
+	List<CommReply> commReplyList = replyDao.getRepliesByCommunityNo(100003);
+	
+	for (CommReply commReply : commReplyList) {
+%>
+		<div class="card mb-3">
+			<div class="card-header">
+				<span style="font-weight:bold"><%=commReply.getUser().getNickname() %></span>
+				<small><%=DateUtils.toText(commReply.getCreatedDate()) %></small>
+				<a href="deleteReply.jsp?commNo=100003&replyNo=<%=commReply.getNo() %>" class="btn btn-danger btn-sm float-end"><i class="bi bi-trash"></i></a>
+			</div>
+			<div class="card-body">
+				<p class="card-text"><%=commReply.getContent() %></p>
+				
+			<form class="border bg-light p-3 mb-3" method="post" action="insertCommReReply.jsp">
+				<input type="hidden" name="commNo" value="100003">
+				<input type="hidden" name="replyNo" value="<%=commReply.getNo()%>">
+	   			<!-- <input type="hidden" name="page" value="">-->
+				<div class="row mb-3">
+					<div class="col-sm-11">
+						<textarea rows="1" class="form-control" name="content">댓글을 입력해주세요.</textarea>
+					</div>
+					<div class="col-sm-1">
+						<button type="submit" class="btn btn-outline-primary" >등록</button>
+  					</div>
+				</div>
+				
+			</form>
+				<div class="card mb-3">
+					<div class="card-header">
+						<span style="font-weight:bold">대댓글</span>
+						<small>2024년 1월 29일</small>
+						<a href="" class="btn btn-danger btn-sm float-end"><i class="bi bi-trash"></i></a>
+					</div>
+					<div class="card-body">
+						<p class="card-text">내용입니다.</p>
+					</div>
+                 </div>
+			</div>
+		</div>
+<%
+	}
+%>
+		</div>
+	</div>
+	
+	<div class="row mb-3">
+		<div class="col-12">
+			<div class="text-end">
+				<a href="" class="btn btn-secondary">목록</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row mb-3">
+		<div class="col-12">
+			<h5>다른 커뮤니티글 추천</h5>
+		</div>
+		<div class="col-3">
+			<div class="card">
+				<img src="../resources/images/meeting/user_1077114.png" class="card-img-top" alt="커뮤니티대표사진">
+				<div class="card-body">
+					<p class="card-title">커뮤니티 제목</p>
+					<a href="" class="btn btn-primary btn-sm text-end"> 상세보기</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-3">
+			<div class="card">
+				<img src="../resources/images/meeting/user_1077114.png" class="card-img-top" alt="커뮤니티대표사진">
+				<div class="card-body">
+					<p class="card-title">커뮤니티 제목</p>
+					<a href="" class="btn btn-primary btn-sm text-end"> 상세보기</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-3">
+			<div class="card">
+				<img src="../resources/images/meeting/user_1077114.png" class="card-img-top" alt="커뮤니티대표사진">
+				<div class="card-body">
+					<p class="card-title">커뮤니티 제목</p>
+					<a href="" class="btn btn-primary btn-sm text-end"> 상세보기</a>
+				</div>
+			</div>
+		</div>
+		<div class="col-3">
+			<div class="card">
+				<img src="../resources/images/meeting/user_1077114.png" class="card-img-top" alt="커뮤니티대표사진">
+				<div class="card-body">
+					<p class="card-title">커뮤니티 제목</p>
+					<a href="" class="btn btn-primary btn-sm text-end"> 상세보기</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

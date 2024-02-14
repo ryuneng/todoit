@@ -1,0 +1,197 @@
+<%@page import="vo.Wish"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="vo.ApplyUser"%>
+<%@page import="java.util.List"%>
+<%@page import="dto.Pagination"%>
+<%@page import="dao.UserDao"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<title>마이페이지::나의 찜모임 목록</title>
+<style type="text/css">
+.txt_line {
+      width:250px;
+      padding:0 5px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+  }
+@font-face {
+    font-family: 'SUIT-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+   font-family: 'SUIT-Regular';
+</style>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="mypage" name="menu"/>
+</jsp:include>
+<%
+	//session 에서 loginuser 정보조회
+	LoginUser loginuser = (LoginUser) session.getAttribute("LOGIN_USER");
+	String userId = loginuser.getId();
+	int userNo = loginuser.getNo();
+
+	int currentPage = NumberUtils.toInt(request.getParameter("page"), 1);
+
+	UserDao userDao = new UserDao();
+	int totalRows = userDao.getWishTotalRows(userNo);
+
+
+
+	Pagination pagination = new Pagination(currentPage, totalRows, 6);
+
+	Map<String, Object> param = new HashMap<>();
+	param.put("userNo", userNo);
+	param.put("begin", pagination.getBegin());
+	param.put("end", pagination.getEnd());
+
+
+	List<Wish> userWishList = userDao.getWishListByNo(param);
+
+
+
+%>
+	<div class="container">
+		<div class="row mt-3">
+			<div class="col-12">
+				<h1>내가 찜한모임</h1>
+			</div>
+		</div>
+
+		<div class="row pt-4 mb-3">
+			<div class="col-3">
+				<jsp:include page="sidebar.jsp">
+					<jsp:param value="wish" name="menu"/>
+				</jsp:include>
+			</div>
+			<div class="col-9">
+
+<%
+	if(userWishList.isEmpty()) {
+%>
+
+	<h1 class="position-absolute top-50 start-50 translate-middle"><strong>찜한 일정이 없습니다.</strong></h1>
+<%
+	} else {
+%>
+
+
+			<div class="cards" >
+				<div class="row ">
+<%
+		for(Wish userWish : userWishList ) {
+%>
+					<div class="col-4">
+						<div class="card h-100 m-1">
+							<a href="../meeting/detail.jsp?meetNo=<%=userWish.getMeeting().getNo() %>">
+			            		<img src="../resources/images/meeting/meeting.jpg" class="card-img-top"/>
+						 	</a>
+		            		<div class="card-body">
+		            			<a href="../meeting/detail.jsp?meetNo=<%=userWish.getMeeting().getNo() %>" class="text-decoration-none ">
+			              			<h5 class="fs-5 txt_line"><%=userWish.getMeeting().getTitle() %></h5>
+			              		</a>
+				              	<div class="card-text">
+				              		<p class="small" >
+				              			<%=DateUtils.toTextKorean(userWish.getMeeting().getStartDate()) %> ~ <%=DateUtils.toTextKorean(userWish.getMeeting().getEndDate()) %>
+				              		</p>
+				              		<div class="row">
+				              			<div class="col-6">
+						              		<div class="small"><%=userWish.getMeeting().getAddress() %></div>
+							                <div class="small">모집현황 <%=userWish.getMeeting().getActualPeople() %>/<%=userWish.getMeeting().getMaxPeople() %> </div>
+<%
+		if (userWish.getMeeting().getDiscountPrice() == 0) {
+%>
+											<div><strong class="text-danger"><%=userWish.getMeeting().getPrice() %>원</strong></div>
+<%
+		} else {
+%>
+											<div class="text-decoration-line-through"><%=userWish.getMeeting().getPrice() %>원</div>
+											<div><strong class="text-danger"><%=userWish.getMeeting().getDiscountPrice() %>원</strong></div>
+<%
+		}
+%>
+				              			</div>
+				              		</div>
+				            	</div>
+			            	</div>
+			          	</div>
+			        </div>
+<%
+		}
+	}
+%>
+					<!-- 페이징처리 구간 -->
+<%
+	int beginPage = pagination.getBeginPage();
+	int endPage = pagination.getEndPage();
+
+	boolean isFrist = pagination.isFirst();
+	boolean isLast = pagination.isLast();
+%>
+		 <nav>
+            <ul class="pagination justify-content-center">
+<%
+   if (isFrist) {
+%>
+               <li class="page-item disabled">
+                  <a class="page-link">이전</a>
+               </li>
+<%
+   } else {
+%>
+               <li class="page-item">
+                  <a class="page-link" href="list.jsp?page=<%=currentPage - 1 %>">이전</a>
+               </li>
+<%
+   }
+%>
+
+<%
+   for (int num = beginPage; num <= endPage; num++) {
+%>
+               <li class="page-item <%=currentPage == num ? "active" : "" %>" >
+                  <a class="page-link" href="list.jsp?page=<%=num %>"><%=num %></a>
+               </li>
+<%
+   }
+%>
+
+<%
+   if(isLast) {
+%>
+               <li class="page-item disabled">
+                  <a class="page-link">다음</a>
+               </li>
+<%
+   } else {
+%>
+               <li class="page-item">
+                  <a class="page-link" href="list.jsp?page=<%=currentPage + 1 %>">다음</a>
+               </li>
+<%
+   }
+%>
+            </ul>
+         </nav>
+		</div>
+	</div>
+</body>
+</html>

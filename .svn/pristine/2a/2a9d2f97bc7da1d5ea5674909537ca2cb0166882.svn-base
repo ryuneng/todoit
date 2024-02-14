@@ -1,0 +1,665 @@
+<%@page import="vo.CommReplyLike"%>
+<%@page import="utils.StringUtils"%>
+<%@page import="vo.User"%>
+<%@page import="vo.CommLike"%>
+<%@page import="dao.CommLikeDao"%>
+<%@page import="vo.CommReply"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.CommReplyDao"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="vo.Community"%>
+<%@page import="dao.CommunityDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://kit.fontawesome.com/bdbabb79d8.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<style>
+@font-face {
+    font-family: 'SUIT-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+	font-family: 'SUIT-Regular';
+}
+</style>
+<title>TODOIT::커뮤니티 상세</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="community" name="manu"/>
+</jsp:include>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	int no = Integer.parseInt(request.getParameter("no"));
+	int pageNo = Integer.parseInt(request.getParameter("page"));
+	String error = request.getParameter("error");
+	String success = request.getParameter("success");
+
+	if("dangerFail".equals(error)) {
+%>
+	<script type="text/javascript">
+		alert('이미 신고한 댓글은 신고할 수 없습니다.');
+	</script>
+<%
+	}
+	if("dangerSuccess".equals(success)) {
+%>
+	<script type="text/javascript">
+		alert('댓글이 신고되었습니다.');
+	</script>
+<%
+	}
+	if("likeSuccess".equals(success)) {
+%>
+	<script type="text/javascript">
+		alert('좋아해주셔서 감사합니다!');
+	</script>
+<%
+	}
+	if("deleteLike".equals(success)) {
+%>
+	<script type="text/javascript">
+		alert('좋아요가 취소되었습니다.');
+	</script>
+<%
+	}
+	if("likeFail".equals(error)) {
+%>
+	<script type="text/javascript">
+		alert('이미 좋아요를 누르신 댓글입니다.');
+	</script>
+<%
+	}
+	
+	CommunityDao commDao = new CommunityDao();
+	Community community = commDao.getCommunityByNo(no);
+
+	community.setViewCnt(community.getViewCnt() + 1);
+	commDao.updateCommunity(community);
+%>
+<%
+	if (loginUser != null && loginUser.getNo() == community.getUser().getNo()) {
+%>
+			<div class="d-flex justify-content-end mb-3">
+				<a href="modifyform.jsp?no=<%=no %>&page=<%=pageNo %>" class="btn btn-warning me-1">수정</a>
+				<a href="delete.jsp?no=<%=no %>&page=<%=pageNo %>" class="btn btn-danger">삭제</a>
+			</div>
+<%
+	} 
+%>
+			<h4 class="mt-3 mb-3"><%=community.getTitle() %></h4>
+		</div>
+		<hr>
+	</div>
+	
+	<!-- 작성자 정보 - 프로필 사진, 작성일, 조회수 -->	
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-start mb-3">
+				<a href="/user/profile.jsp?userNo=<%=community.getUser().getNo() %>">
+					<img src="../resources/images/user/<%=community.getUser().getFilename() %>" class="rounded-circle" width="50" height="50">
+				</a>
+				<div class="ms-3">
+					<span><%=community.getUser().getNickname() %></span>
+					<div class="d-flex justify-content-between">
+	    				<span><%=DateUtils.toText(community.getCreatedDate()) %></span>
+			    		<span class="ms-3">조회수 <%=community.getViewCnt() %></span>
+	  				</div>
+	  			</div>
+			</div>
+		</div>
+		<hr>
+	</div>
+	
+	<div class="row mt-3 mb-3">
+		<div class="col-12">
+			<div class="card">
+    			<a href="../meeting/detail.jsp?meetNo=<%=community.getMeeting().getNo() %>" class="link-offset-2 link-underline link-underline-opacity-0">
+	  			<div class="card-body text-black">
+ 			
+    				<h6 class="card-title fw-bold"><%=community.getMeeting().getTitle() %></h6>
+    				<p class="card-text text-secondary text-start mb-0" style="font-size: 13px;">
+    				<%=community.getMeeting().getAddress() %></p>
+    				
+	  			</div>
+    			</a>
+	  		</div>
+		</div>
+  	</div>
+  	
+  	<div class="row mt-3 mb-3">
+  		<div class="col-12">
+<%
+	if (community.getCategory().getNo() == 100001) {
+%>
+  			<span>평점 :	</span>
+<%
+		for (int i = 1; i <= community.getScore(); i++) { 
+%>
+	  			<i class="fa-solid fa-star"></i>
+<%
+		}
+	} 
+%>
+  	</div>
+  	
+  	<div class="row mt-3">
+  		<div class="col-3">
+  			<img src="../resources/images/community/<%=community.getImageName() %>" class="img-thumbnail" style="width:100%;">  			
+  		</div>  		
+  		<div class="col-9">
+			<div class="p-3 mb-3">
+				<p><%=StringUtils.withBr(community.getContent()) %></p>
+			</div>
+  		</div>
+  		</div>
+  	</div>
+	
+  	<div class="row mt-5 mb-3">  	
+  	 	<div class="col-12">
+  	 		<div class="text-center">
+<%
+	if (loginUser == null) {
+%>
+				<button type="button" class="btn btn-outline-danger" onclick="loginAlert()">
+					좋아요 <span class="badge text-bg-danger"><%=community.getLikeCnt() %></span>
+				</button>
+<%
+	} else {
+		User user = new User();
+		user.setNo(loginUser.getNo());
+		
+		CommLike commLike = new CommLike();
+		commLike.setCommunity(community);
+		commLike.setUser(user);
+		
+		CommLikeDao likeDao = new CommLikeDao();
+		CommLike savedLike = likeDao.getLike(commLike);
+		
+		if (savedLike != null) {
+		
+%>
+				<a href="insertLike.jsp?no=<%=no %>&page=<%=pageNo %>" class="btn btn-danger">
+					좋아요 <span class="badge text-bg-danger"><%=community.getLikeCnt() %></span>
+				</a>
+<%
+		} else {
+%>
+				<a href="insertLike.jsp?no=<%=no %>&page=<%=pageNo %>" class="btn btn-outline-danger">
+					좋아요 <span class="badge text-bg-danger"><%=community.getLikeCnt() %></span>
+				</a>
+<%	
+		}
+	}
+%>
+				<button type="button" class="btn btn-outline-success" onclick="clip(); return false;">
+					공유 <i class="fa-solid fa-share"></i></button>
+				<button class="btn btn-warning" id="kakao-link-btn">
+					<img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
+    				alt="카카오톡 공유 보내기 버튼" height="25px" width="25px"/>
+    			</button>
+			</div>
+		</div>
+	</div>
+  	<hr>
+  	
+	<div class="row">
+		<div class="col-12">
+		<h5>댓글</h5>
+		<form class="border bg-light p-3 mb-3" method="post" action="insertCommReply.jsp" onsubmit="checkContent(event)">
+			<input type="hidden" name="no" value="<%=no %>">
+			<input type="hidden" name="page" value="<%=pageNo %>">
+				<div class="row mb-3">
+					<div class="col-sm-11">
+						<textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력해주세요."></textarea>
+					</div>
+					<div class="col-sm-1">
+<%
+	if (loginUser == null) {
+%>
+						<button type="button" class="btn btn-outline-primary" onclick="loginAlert()">등록</button>
+<%
+	} else {
+%>
+						<button type="submit" class="btn btn-outline-primary">등록</button>
+<%
+	}
+%>
+  					</div>
+				</div>
+		</form>
+		
+<%
+	CommReplyDao replyDao = new CommReplyDao();
+	List<CommReply> commReplyList = replyDao.getRepliesByCommunityNo(no);
+	
+	for (CommReply commReply : commReplyList) {
+		
+		boolean showDelBtn = false;
+		boolean showModifyBtn = false;
+		boolean showNoticeBtn = false;
+		boolean showReReplyBtn = false;
+		
+		if (loginUser == null) {
+			
+		}
+		// 로그인한 사용자가 관리자인 경우 - 삭제
+		else if (loginUser.getNo() == 100001) {
+			showDelBtn = true;
+		}
+		// 로그인한 사용자가 댓글 작성자이면서 글 작성자인 경우
+		else if (loginUser.getNo() == commReply.getUser().getNo() && loginUser.getNo() == community.getUser().getNo()) {
+			showDelBtn = true;
+			showModifyBtn = true;
+			showReReplyBtn = true;
+		}
+		// 로그인한 사용자가 댓글 작성자인 경우 - 삭제, 수정, 대댓글
+		else if (loginUser.getNo() == commReply.getUser().getNo()) {
+			showDelBtn = true;
+			showModifyBtn = true;
+			showReReplyBtn = true;
+		}
+		// 로그인한 사용자가 글 작성자인 경우 - 삭제, 대댓글
+		else if (loginUser.getNo() == community.getUser().getNo()) {
+			showDelBtn = true;
+			showReReplyBtn = true;
+		}
+		// 로그인한 사용자가 댓글 작성자가 아니고 글 작성자가 아닌 경우 - 신고, 대댓글
+		else if (loginUser.getNo() != commReply.getUser().getNo() || loginUser.getNo() != community.getUser().getNo()) {
+			showNoticeBtn = true;
+			showReReplyBtn = true;
+		}
+%>
+		<div class="card mb-3">
+			<div class="card-header">
+				<!-- 댓글 작성자 정보 -->
+				<span style="font-weight:bold"><%=commReply.getUser().getNickname() %></span>
+				<small><%=DateUtils.toText(commReply.getCreatedDate()) %></small>
+<%
+	if (showDelBtn) {
+%>
+				<!-- 댓글 삭제 버튼 -->
+				<a href="deleteReply.jsp?no=<%=no %>&page=<%=pageNo %>&replyNo=<%=commReply.getNo() %>" class="btn btn-danger btn-sm float-end">
+				<i class="bi bi-trash"></i></a>
+<%
+	}
+
+	if (showModifyBtn) {
+%>
+				<!-- 댓글 수정버튼 -->
+				<button type="button" onclick="toggleReplyUpdateForm(<%=commReply.getNo() %>)"
+						class="btn btn-warning btn-sm float-end"><i class="bi bi-eraser"></i></button>
+<%
+	}
+
+	if (showNoticeBtn) {
+%>
+				<!-- 댓글 신고 버튼 -->
+				<a href="insertReplyDangerCnt.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReply.getNo() %>"
+					class="btn btn-outline-danger btn-sm float-end">🚨</a>
+<%
+	}
+
+	if (showReReplyBtn) {
+%>
+				<!-- 대댓글 작성 버튼 -->
+				<button type="button" onclick="toggleReplyinsertForm(<%=commReply.getNo() %>)"
+						class="btn btn-secondary btn-sm float-end"><i class="bi bi-arrow-return-right"></i></button>
+<%
+	}
+%>
+			</div>
+<%
+	if (commReply.getDangerCnt() >= 5) {
+%>
+			<div class="card-body">
+				<!-- 댓글 내용 -->
+				<p class="card-text">신고된 댓글입니다.</p>
+<%
+	} else {
+%>
+			<div class="card-body">
+				<!-- 댓글 내용 -->
+				<p class="card-text"><%=StringUtils.withBr(commReply.getContent()) %></p>
+<%
+		if (loginUser == null) {
+%>
+				<button class="btn btn-sm" type="button" onclick="loginAlert()" style="text-decoration:none;color:red;padding:0;">
+               		<i class="fa-regular fa-heart"></i>
+               </button>
+				<span><%=replyDao.getReplyLikeCnt(commReply.getNo()) %></span>
+<%
+		} else {
+			User user = new User();
+			user.setNo(loginUser.getNo());
+			
+			CommReplyLike replyLike = new CommReplyLike();
+			replyLike.setUser(user);
+			replyLike.setCommReply(commReply);
+			
+			CommReplyLike savedReplyLike = replyDao.getReplyLike(replyLike);
+			if (savedReplyLike != null) {
+%>
+				<a href="insertReplyLike.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReply.getNo() %>" style="text-decoration:none;color:red;">
+					<i class="fa-solid fa-heart"></i></a>
+					<span><%=replyDao.getReplyLikeCnt(commReply.getNo()) %></span>
+<%
+			} else {
+%>
+				<a href="insertReplyLike.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReply.getNo() %>" style="text-decoration:none;color:red;">
+					<i class="fa-regular fa-heart"></i></a>
+					<span><%=replyDao.getReplyLikeCnt(commReply.getNo()) %></span>
+<%
+			}
+		}
+%>
+<%
+	} 
+%>
+				<!-- 댓글 수정 폼 -->
+				<form class="border bg-light p-3 mb-3 d-none"
+					id="form-update-reply-<%=commReply.getNo() %>"
+					method="post"
+					action="modifyCommReply.jsp">
+					<input type="hidden" name="no" value="<%=community.getNo() %>">
+					<input type="hidden" name="page" value="<%=pageNo %>">
+					<input type="hidden" name="replyNo" value="<%=commReply.getNo() %>">
+					
+					<div class="row mb-3">
+						<div class="col-sm-11">
+							<textarea rows="2" class="form-control" name="content"><%=StringUtils.withBr(commReply.getContent()) %></textarea>
+						</div>
+						<div class="col-sm-1 ">
+							<button type="submit" class="btn btn-outline-primary" >수정</button>
+						</div>
+					</div>	
+				</form>
+<%
+		List<CommReply> commReReplyList = replyDao.getReReplies(commReply.getNo());
+		
+		for (CommReply commReReply : commReReplyList) {
+			
+			boolean showDelBtnRe = false;
+			boolean showModifyBtnRe = false;
+			boolean showNoticeBtnRe = false;
+			
+			if (loginUser == null) {
+				
+			}
+			// 로그인한 사용자가 관리자인 경우 - 삭제
+			else if (loginUser.getNo() == 100001) {
+				showDelBtnRe = true;
+			}
+			// 로그인한 사용자가 댓글 작성자이면서 글 작성자인 경우
+			else if (loginUser.getNo() == commReply.getUser().getNo() && loginUser.getNo() == community.getUser().getNo()) {
+				showDelBtnRe = true;
+				showModifyBtnRe = true;
+			}
+			// 로그인한 사용자가 글 작성자인 경우 - 삭제
+			else if (loginUser.getNo() == community.getUser().getNo()) {
+				showDelBtnRe = true;
+			}
+			// 로그인한 사용자가 댓글 작성자인 경우 - 삭제, 수정
+			else if (loginUser.getNo() == commReReply.getUser().getNo()) {
+				showDelBtnRe = true;
+				showModifyBtnRe = true;
+			}
+			// 로그인한 사용자가 댓글 작성자가 아닌 경우 - 신고
+			else if (loginUser.getNo() != commReReply.getUser().getNo() || loginUser.getNo() != community.getUser().getNo()) {
+				showNoticeBtnRe = true;
+			}
+%>
+				<div class="card mb-3 mt-3">
+					<div class="card-header">
+						<!-- 대댓글 작성자 정보 -->
+						<span style="font-weight:bold"><%=commReReply.getUser().getNickname() %></span>
+						<small><%=DateUtils.toText(commReReply.getCreatedDate()) %></small>
+<%
+	if (showDelBtnRe) {
+%>						
+						<!-- 대댓글 삭제 버튼 -->
+						<a href="deleteReReply.jsp?no=<%=no %>&page=<%=pageNo %>reReplyNo=<%=commReReply.getNo() %>" class="btn btn-danger btn-sm float-end">
+							<i class="bi bi-trash"></i></a>
+<%
+	}
+
+	if (showModifyBtnRe) {
+%>
+						<!-- 대댓글 수정 버튼 -->
+						<button type="button" onclick="toggleReplyUpdateForm(<%=commReReply.getNo() %>)"
+						class="btn btn-warning btn-sm float-end "><i class="bi bi-eraser"></i></button>
+<%
+	}
+
+	if (showNoticeBtnRe) {
+%>
+				<!-- 댓글 신고 버튼 -->
+				<a href="insertReplyDangerCnt.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReReply.getNo() %>"
+					class="btn btn-outline-danger btn-sm float-end ">🚨</a>
+<%
+	}
+%>
+					</div>
+<%
+	if (commReReply.getDangerCnt() >= 5) {
+%>
+					<div class="card-body">
+						<!-- 대댓글 내용 -->
+						<p class="card-text">신고된 댓글입니다.</p>
+<%
+	} else {
+%>
+					<div class="card-body">
+						<!-- 대댓글 내용 -->
+						<p class="card-text"><%=StringUtils.withBr(commReReply.getContent()) %></p>
+<%
+		if (loginUser == null) {
+%>
+				<button class="btn btn-sm" type="button" onclick="loginAlert()" style="text-decoration:none;color:red;padding:0;">
+               		<i class="fa-regular fa-heart"></i>
+               </button>
+				<span><%=replyDao.getReplyLikeCnt(commReReply.getNo()) %></span>
+<%
+		} else {
+			User user = new User();
+			user.setNo(loginUser.getNo());
+			
+			CommReplyLike replyLike = new CommReplyLike();
+			replyLike.setUser(user);
+			replyLike.setCommReply(commReReply);
+			
+			CommReplyLike savedReplyLike = replyDao.getReplyLike(replyLike);
+			if (savedReplyLike != null) {
+%>
+				<a href="insertReplyLike.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReReply.getNo() %>" style="text-decoration:none;color:red;">
+					<i class="fa-solid fa-heart"></i></a>
+					<span><%=replyDao.getReplyLikeCnt(commReReply.getNo()) %></span>
+<%
+			} else {
+%>
+				<a href="insertReplyLike.jsp?no=<%=community.getNo() %>&page=<%=pageNo %>&replyNo=<%=commReReply.getNo() %>" style="text-decoration:none;color:red;">
+					<i class="fa-regular fa-heart"></i></a>
+					<span><%=replyDao.getReplyLikeCnt(commReReply.getNo()) %></span>
+<%
+			}
+		}
+	}
+%>
+						<!-- 댓글 수정 폼 -->
+						<form class="border bg-light p-3 mb-3 d-none"
+							id="form-update-reply-<%=commReReply.getNo() %>"
+							method="post"
+							action="modifyCommReReply.jsp">
+							<input type="hidden" name="no" value="<%=community.getNo() %>">
+							<input type="hidden" name="page" value="<%=pageNo %>">
+							<input type="hidden" name="reReplyNo" value="<%=commReReply.getNo() %>">
+							
+							<div class="row mb-3">
+								<div class="col-sm-11">
+									<textarea rows="2" class="form-control" name="content"><%=StringUtils.withBr(commReReply.getContent()) %></textarea>
+								</div>
+								<div class="col-sm-1 ">
+									<button type="submit" class="btn btn-outline-primary" >수정</button>
+								</div>
+							</div>	
+						</form>
+					</div>
+                 </div>
+<%
+		}
+%>
+				<!-- 대댓글 작성 폼 -->
+            	<form class="border bg-light p-3 mt-3 mb-3 d-none" method="post" action="insertCommReReply.jsp" 
+            		id="form-insert-reply-<%=commReply.getNo() %>" onsubmit="checkContent(event)">
+					<input type="hidden" name="no" value="<%=no %>">
+					<input type="hidden" name="page" value="<%=pageNo %>">
+					<input type="hidden" name="replyNo" value="<%=commReply.getNo()%>">
+					<div class="row mb-3">
+						<div class="col-sm-11">
+							<textarea rows="1" class="form-control" name="content" placeholder="댓글을 입력해주세요."></textarea>
+						</div>
+						<div class="col-sm-1">
+							<button type="submit" class="btn btn-outline-primary" >등록</button>
+  						</div>
+					</div>
+				</form>
+                 
+			</div>
+		</div>
+<%
+	}
+%>
+		</div>
+		</div> <!-- 카드 닫힘 -->
+	
+	<div class="row mb-3">
+		<div class="col-12">
+			<div class="text-end">
+				<a href="list.jsp?page=<%=pageNo %>" class="btn btn-secondary">목록</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row mb-3">
+		<div class="col-12">
+			<h5>다른 커뮤니티글 추천</h5>
+		</div>
+		<div class="col-12 d-flex justify-content-between">
+<%
+	List<Community> communityList = commDao.getRecommendCommunities("like", 1, 4);
+	for (Community Recommendcomm : communityList) {
+%>
+			<div class="card-header col-3 mb-3 p-1" style="width: 24%;">
+				<a href="detail.jsp?no=<%=Recommendcomm.getNo() %>&page=<%=pageNo %>" class="link-offset-2 link-underline link-underline-opacity-0">
+					<img src="../resources/images/community/<%=Recommendcomm.getImageName() %>" class="card-img-top" style="height: 60%" alt="커뮤니티대표사진">
+					<div class="card-body p-2">
+						<h7 class="card-title text-black"><%=Recommendcomm.getTitle() %></h7>
+	    				<p class="card-text"><small class="text-muted"><%=DateUtils.toText(Recommendcomm.getCreatedDate()) %></small></p>
+					</div>
+				</a>
+			</div>
+<%
+	}
+%>
+		</div>
+	</div> <!-- col 닫힘 -->
+	</div> <!-- row 닫힘 -->
+	</div>
+</div>
+<jsp:include page="/include/footer.jsp"></jsp:include>
+</body>
+<script type="text/javascript">
+	function toggleReplyUpdateForm(replyNo) {
+		let element = document.getElementById("form-update-reply-" + replyNo);
+		// toggle("클래스값")
+		// 지정된 클래스값을 토글시킨다.
+		// 지정된 클래스값을 가지고 있으면 삭제한다.
+		// 지정된 클래스값을 가지고 있지 않으면 추가한다.
+		element.classList.toggle('d-none');
+	}
+	
+	function toggleReplyinsertForm(replyNo) {
+		let element = document.getElementById("form-insert-reply-" + replyNo);
+		// toggle("클래스값")
+		// 지정된 클래스값을 토글시킨다.
+		// 지정된 클래스값을 가지고 있으면 삭제한다.
+		// 지정된 클래스값을 가지고 있지 않으면 추가한다.
+		element.classList.toggle('d-none');
+	}
+	
+	function clip() {
+		    var url = '';    // <a>태그에서 호출한 함수인 clip 생성
+		    var textarea = document.createElement("textarea");  
+		    //url 변수 생성 후, textarea라는 변수에 textarea의 요소를 생성
+		    
+		    document.body.appendChild(textarea); //</body> 바로 위에 textarea를 추가(임시 공간이라 위치는 상관 없음)
+		    url = window.document.location.href;  //url에는 현재 주소값을 넣어줌
+		    textarea.value = url;  // textarea 값에 url를 넣어줌
+		    textarea.select();  //textarea를 설정
+		    document.execCommand("copy");   // 복사
+		    document.body.removeChild(textarea); //extarea 요소를 없애줌
+		    
+		    alert("URL이 복사되었습니다.")  // 알림창
+	}
+	 
+	function loginAlert() {
+	     alert('로그인이 필요한 서비스입니다.');
+	}
+	
+	function checkContent() {
+		let form = event.target;
+		let content = form.querySelector("textarea").value;
+		if (content === "") {
+			event.preventDefault();
+			alert("내용을 입력하세요");
+			return;
+		}
+	}
+	
+	Kakao.init('9255796b13d48451ac7ccab3bb053c11');
+	
+	Kakao.Link.createDefaultButton({
+	    container: '#kakao-link-btn',
+	    objectType: 'feed', // 피드, 리스트 등 템플릿 종류
+	    content: {
+	      title: '<%=StringUtils.escape(community.getTitle()) %>',
+	      description: '<%=StringUtils.escape(community.getContent()) %>',
+	      imageUrl: 'https://img.freepik.com/premium-vector/group-of-teenagers-high-school-students-hug-and-laugh-enjoy-being-friends-with-peers-and-classmates-team-of-happy-teenagers-looking-at-screen-for-advertising-educational-services_140689-7171.jpg?size=626&ext=jpg&ga=GA1.2.1317071095.1706659522&semt=sph',
+	      link: {
+	    	  mobileWebUrl: 'http://localhost/community/detail.jsp?no=<%=no %>&page=<%=pageNo %>',
+	          webUrl : 'http://localhost/community/detail.jsp?no=<%=no %>&page=<%=pageNo %>'
+	      },
+	    },
+	    social: {
+	        likeCount: <%=community.getLikeCnt() %>,
+	        viewCount: <%=community.getViewCnt() %>,
+	      },
+	    buttons: [
+	      {
+	        title: '웹으로 이동',
+	        link: {
+	          mobileWebUrl: 'http://localhost/community/detail.jsp?no=<%=no %>&page=<%=pageNo %>',
+	          webUrl : 'http://localhost/community/detail.jsp?no=<%=no %>&page=<%=pageNo %>'
+	        },
+	      },
+	    ],
+	  })
+	 
+</script>
+</html>

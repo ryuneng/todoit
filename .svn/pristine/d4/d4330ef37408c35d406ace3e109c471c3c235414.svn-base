@@ -1,0 +1,22 @@
+package vo;
+
+public class Follow {
+	private User user;
+	
+	public Follow() {}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "Follow [user=" + user + "]";
+	}
+	
+	
+}

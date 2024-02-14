@@ -1,0 +1,104 @@
+<%@page import="utils.NumberUtils"%>
+<%@page import="org.apache.commons.io.IOUtils"%>
+<%@page import="java.io.File"%>
+<%@page import="java.io.FileOutputStream"%>
+<%@page import="java.io.InputStream"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="org.apache.commons.fileupload2.core.DiskFileItem"%>
+<%@page import="java.util.List"%>
+<%@page import="org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload"%>
+<%@page import="org.apache.commons.fileupload2.core.DiskFileItemFactory"%>
+<%@page import="vo.Address"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="java.util.Date"%>
+<%@page import="vo.User"%>
+<%@page import="org.apache.commons.codec.digest.DigestUtils"%>
+<%@page import="dao.UserDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+
+	String directory = "C:\\todoit-workspace\\todoit\\src\\main\\webapp\\resources\\images\\user";
+	
+	DiskFileItemFactory factory = DiskFileItemFactory
+			.builder()
+			.setCharset("utf-8")
+			.get();
+	JakartaServletDiskFileUpload upload = new JakartaServletDiskFileUpload(factory);
+	List<DiskFileItem> items = upload.parseRequest(request);
+	
+	Map<String, String> parameter = new HashMap<>();
+	String filename = "user_1077114.png";
+	for (DiskFileItem item : items) {
+		if (item.isFormField()) {		// 일반 입력필드
+			String name = item.getFieldName();
+			String value = item.getString();
+			parameter.put(name, value);
+		} else {						// 파일업로드 필드
+			if (item.getSize() > 0) {
+				filename = System.currentTimeMillis() + item.getName();
+				InputStream in = item.getInputStream();
+				FileOutputStream fos = new FileOutputStream(new File(directory, filename));
+				
+				IOUtils.copy(in, fos);
+				fos.close();				
+			}
+		}
+	}
+
+
+
+	String id = parameter.get("id");
+	String rawPassword = parameter.get("password");
+	String name = parameter.get("name");
+	String email = parameter.get("email");
+	String tel = parameter.get("tel");	
+	String nickname = parameter.get("nickname");	
+	Date birthDate = DateUtils.toDate(parameter.get("birthDate"));
+	String gender = parameter.get("gender");
+	String status = "N";
+	int address = NumberUtils.toInt(parameter.get("guNo"));
+	String content = parameter.get("content");
+	UserDao userDao = new UserDao();
+	
+	User savedUser = userDao.getUserById(id);
+	if (savedUser != null) {
+		response.sendRedirect("registerform.jsp?fail=id");
+		return;	
+	}
+	savedUser = userDao.getUserByEmail(email);
+	if (savedUser != null) {
+		response.sendRedirect("registerform.jsp?fail = email");
+		return;	
+	}
+	
+	String sha1Password = DigestUtils.sha256Hex(rawPassword);
+	
+	Address addresses1 = new Address();
+	addresses1.setNo(address);
+	
+	// 3. User객체를 생성해서 조회된 값을 저장한다.
+	User user = new User();
+	user.setId(id);
+	user.setPassword(sha1Password);
+	user.setName(name);
+	user.setEmail(email);
+	user.setTel(tel);
+	user.setNickname(nickname);
+	user.setBirthDate(birthDate);
+	user.setGender(gender);
+	user.setStatus(status);
+	user.setAddress(addresses1);
+	user.setContent(content);
+	user.setFilename(filename);
+	user.setCreateDate(new Date());
+	System.out.println(user);
+	
+	// 5. UserDao객체의 insertUser(User user) 메소드를 실행한다.
+	userDao.insertUser(user);
+	
+	// 6. 브라우저에 재요청할 URL을 응답으로 보낸다.
+	response.sendRedirect("register-completed.jsp");
+	
+%>

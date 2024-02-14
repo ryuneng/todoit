@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="payments" >
+	<!-- 결제 시 주문번호 생성 -->
+<!-- 	<insert id="insertOrder" parameterClass="vo.Payment">
+		insert into payments
+		(order_no, pay_price, apply_no)
+		values
+		(payments_seq.nextval, #price#, #apply.applyNo#)
+	</insert> -->
+
+	<!-- 포인트 조회 -->
+	<!--
+		* parameterClass : 아래 SQL 구문의 #value#로 전달받는 값의 타입 = PaymentDao > getPointByUserNo 메소드 > userNo 파라미터의 타입
+		* resultClass : 아래 SQL 구문을 통해 조회 후 전달해줄 값의 타입 = PaymentDao > getPointByUserNo 메소드의 타입
+	-->
+	<select id="getPointByUserNo" parameterClass="int" resultClass="int">
+		select user_point
+        from users
+        where user_no = #value#
+	</select>
+	
+	<!-- 사용포인트 업데이트 -->
+	<update id="updateUsePoint" parameterClass="int">
+		update payments
+		set
+		    use_point = 2000
+		where
+		    order_no = 100
+	</update>
+</sqlMap>

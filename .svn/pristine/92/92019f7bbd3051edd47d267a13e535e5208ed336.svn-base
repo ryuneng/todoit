@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="payments" >
+	<!-- 1. 참여번호 시퀀스 획득
+		* 결제가 이루어질 때 PAYMENTS의 order_no와 APPLY_USERS의 apply_no의 시퀀스가 동시에 생성되어야 하는데,
+		  이 때 PAYMENTS와 APPLY_USERS가 1:n 관계로 되어있어서
+		  APPLY_USERS에서 시퀀스를 증가시키면 PAYMENTS에서는 order_no가 맞지 않게 되기 때문에
+		  getApplyNo로 시퀀스를 따로 증가시켜두어야 함
+	 -->
+	<select id="getApplyNo" resultClass="int">
+		select apply_seq.nextval
+		from dual
+	</select>
+	
+	<!-- 참여번호로 참여정보 1건 조회 -->
+	<select id="getApplyUserByNo" parameterClass="int" resultClass="vo.ApplyUser">
+		select
+			apply_no,
+			meeting_no
+		from
+			apply_users
+		where
+			apply_no = #applyNo#
+	</select>
+	
+	<!-- 2. 결제완료 후 참여정보 생성 -->
+	<insert id="insertApplyUser" parameterClass="vo.ApplyUser">
+		insert into apply_users
+		(apply_no, user_no, meeting_no)
+		values
+		(#no#, #user.no#, #meeting.no#)
+	</insert>
+	
+	<!-- 3. 결제정보 생성 -->
+	<insert id="insertPayment" parameterClass="vo.Payment">
+		insert into payments
+		(order_no, pay_price, apply_no, used_point)
+		values
+		(payments_seq.nextval, #price#, #applyUser.no#, #usedPoint#)
+	</insert>
+	
+	<!-- 참여번호로 결제정보 1건 조회 -->
+	<select id="getPaymentByApplyNo" parameterClass="int" resultClass="vo.Payment">
+		select
+			order_no   as orderNo,
+			pay_price  as price,
+			pay_method as method,
+			apply_no   as "applyUser.no",
+			pay_date   as payDate,
+			used_point as usedPoint
+		from
+			payments
+		where
+			apply_no = #applyNo#
+	</select>
+	
+	<!-- 유저번호로 결제정보, 모임정보 조회(마이페이지 결제내역) -->
+	<select id="getUserPaymentByUserNo" parameterClass="int" resultClass="dto.UserPaymentDto">
+		select
+			A.order_no      as orderNo,
+			A.pay_price     as price,
+			A.pay_method    as method,
+			A.pay_date      as payDate,
+			A.used_point    as usedPoint,
+			A.pay_completed as payCompleted,
+            C.meeting_no    as meetNo,
+            C.meeting_title as Title,
+            C.image_name    as imageName
+		from
+			payments A, apply_users B, meeting C
+		where
+			A.apply_no = B.apply_no
+        and
+            B.meeting_no = C.meeting_no
+        and
+            B.user_no = #userNo#
+        order by order_no desc
+	</select>
+</sqlMap>

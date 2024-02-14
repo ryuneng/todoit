@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="comm-likes">
+	
+	<select id="getLike" parameterClass="vo.CommLike" resultClass="vo.CommLike">
+		select 
+			comm_no as "community.no", 
+			user_no as "user.no"
+		from 
+			comm_likes 
+		where 
+			comm_no = #community.no#
+			and user_no = #user.no#
+	</select>
+	
+	<insert id="addLike" parameterClass="vo.CommLike">
+		insert into comm_likes
+		(comm_no, user_no)
+		values
+		(#community.no#, #user.no#)
+	</insert>
+	
+	<delete id="deleteLike" parameterClass="vo.CommLike">
+		delete from comm_likes
+		where comm_no = #community.no#
+		and user_no = #user.no#
+	</delete>
+	
+</sqlMap>

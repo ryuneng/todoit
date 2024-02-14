@@ -1,0 +1,74 @@
+<%@page import="dao.PointDao"%>
+<%@page import="vo.PointHistory"%>
+<%@page import="dao.UserDao"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Meeting"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dao.PaymentDao"%>
+<%@page import="vo.ApplyUser"%>
+<%@page import="vo.Payment"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="vo.User"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+	
+	// 0. 요청파라미터 값 조회
+	int meetNo = Integer.parseInt(request.getParameter("meetNo"));
+	int price = Integer.parseInt(request.getParameter("price"));
+	int usedPoint = Integer.parseInt(request.getParameter("usedPoint"));
+	
+	// 1. User 객체 생성 후 로그인중인 유저번호 저장
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	// 2. Meeting 객체 생성 후 모임정보 저장
+	Meeting meeting = new Meeting();
+	meeting.setNo(meetNo);
+
+	// 3. PaymentDao 객체 생성 후 시퀀스 획득
+	PaymentDao paymentDao = new PaymentDao();
+	int applyNo = paymentDao.getApplyNo();
+	
+	// 4. ApplyUser 객체 생성 및 정보 저장
+	ApplyUser applyUser = new ApplyUser();
+	applyUser.setNo(applyNo);      // 시퀀스값을 참여번호로 저장
+	applyUser.setUser(user);	   // 유저정보 저장
+	applyUser.setMeeting(meeting); // 모임정보 저장
+	
+	// 5. 결제완료 후 참여정보 생성
+	paymentDao.insertApplyUser(applyUser);
+	
+	// 6. Payment 객체 생성 후 참여정보, 가격, 차감포인트 저장
+	Payment payment = new Payment();
+	payment.setApplyUser(applyUser);
+	payment.setPrice(price);
+	payment.setUsedPoint(usedPoint);
+	
+	// 7. 결제정보 생성
+	paymentDao.insertPayment(payment);
+	
+	// 8. Meeting의 총결제금액, 참여자수 갱신
+	MeetingDao meetingDao = new MeetingDao();					  // 1) MeetingDao 객체 생성
+	meeting = meetingDao.getMeetingByNo(meetNo);				  // 2) 기존 미팅 정보 조회
+	meeting.setTotalPayPrice(meeting.getTotalPayPrice() + price); // 3) 요청파라미터값으로 받아온 price만큼 매출액 증가
+	meeting.setActualPeople(meeting.getActualPeople() + 1);		  // 4) 참여자수 1 증가
+	meetingDao.updateMeetingByNo(meeting);						  // 5) 미팅 정보 업데이트
+
+	// 9. User의 보유포인트 갱신
+	UserDao userDao = new UserDao();			   // 1) UserDao 객체 생성
+	user = userDao.getUserByNo(loginUser.getNo()); // 2) 로그인한 유저의 정보 조회
+	user.setPoint(user.getPoint() - usedPoint);	   // 3) 유저 보유포인트 - 사용한포인트
+	userDao.updateUser(user);					   // 4) 유저 정보 업데이트
+
+	// 10. 포인트 변경 내역 갱신
+	PointHistory pointHistory = new PointHistory(); // 1) PointHistory 객체 생성
+	PointDao pointDao = new PointDao();				// 2) PointDao 객체 생성
+	pointHistory.setUsedPoint(usedPoint);			// 3) 사용포인트 저장
+	pointHistory.setUser(user);						// 4) 유저정보 저장
+	pointDao.insertPointsHistory(pointHistory);		// 5) 포인트 히스토리 업데이트
+	
+	// 11. 재요청 URL 응답으로 결제완료 페이지 전송
+	response.sendRedirect("completedPayment.jsp?applyNo=" + applyNo);
+%>

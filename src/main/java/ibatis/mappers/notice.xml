@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="notice">
+<!-- 공지사항 항목 저장 -->
+	<insert id="insertNotice" parameterClass="vo.Notice">
+		insert into notice
+			(notice_no, notice_title, notice_content)
+		
+		values
+			(notice_seq.nextval, #title#, #content#)
+	</insert>
+<!-- 공지사항 항목 조회 -->
+	<select id="getNotices" resultClass="vo.Notice">
+	 	select 
+	 		notice_no 				as no,
+	 		notice_title			as title,
+	 		notice_view_cnt			as view_cnt,
+	 		notice_createDate		as createDate
+		from 
+			notice
+	</select>	
+	
+<!--  공지사항 목록 상세조회 -->
+	<select id="getNoticeByNo"  parameterClass="int" resultClass="vo.Notice">
+
+	 	select 
+	 		notice_no 				as no,
+	 		notice_title			as title,
+            notice_content          as content,
+	 		notice_view_cnt			as view_cnt,
+	 		notice_createDate		as createDate
+		from 
+			notice
+        where 
+            notice_no = #no#
+	</select>	
+		<!-- 공지사항 조회수 증가 -->
+	
+	<update id="updateNotice" parameterClass="vo.Notice">
+		update notice
+		set
+			notice_title = #title#,
+			notice_content = #content#,
+			notice_view_cnt = #view_cnt#
+		where
+			notice_no = #no#
+	</update>
+
+	
+	
+		
+</sqlMap>

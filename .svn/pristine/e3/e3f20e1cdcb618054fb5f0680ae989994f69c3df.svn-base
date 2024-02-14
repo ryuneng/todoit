@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="meeting" >
+
+	<insert id="insertMeeting" parameterClass="vo.Meeting">
+		insert into meeting
+		(MEETING_NO, MEETING_TITLE, MEETING_MAX_PEOPLE, MEETING_ACTUAL_PEOPLE, MEETING_ADDRESS,
+		MEETING_PRICE, MEETING_DISCOUNT_PRICE, MEETING_START_DATE, MEETING_END_DATE, MEETING_CONTENT,
+		MEETING_APPROVE, MEETING_CATEGORY_NO, USER_NO, IMAGE_NAME)
+		values
+		(meeting_seq.nextval, #title#, #maxPeople#, #actualPeople#, #address#,
+		#price#, #discountPrice#, #startDate#, #endDate#, #content#,
+		#approve#, #category.no#, #user.no#, #imageName#)
+	</insert>
+	
+
+</sqlMap>

@@ -1,0 +1,38 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.PointHistory;
+
+public class PointDao {
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	/**
+	 * 포인트 히스토리 추가
+	 * @param pointHistory 포인트 히스토리 정보
+	 * @throws SQLException
+	 */
+	public void insertPointsHistory(PointHistory pointHistory) throws SQLException {
+		ibatis.insert("points.insertPointsHistory", pointHistory);
+	}
+	
+	public PointHistory getPointHistoryByUserNo(int userNo) throws SQLException {
+		return (PointHistory)ibatis.queryForObject("");
+	}
+	
+	/**
+	 * 유저번호로 유저 보유포인트 조회
+	 * @param userNo 유저번호
+	 * @return 해당 유저의 보유포인트
+	 * @throws SQLException
+	 */
+	// * 메소드 타입 = payments.xml의 resultClass 타입
+	// * userNo 타입 = payments.xml의 parameterClass 타입
+	public int getPointByUserNo(int userNo) throws SQLException {
+		return (int) ibatis.queryForObject("points.getPointByUserNo", userNo);
+	}
+
+}

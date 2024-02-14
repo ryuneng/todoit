@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+	<div>
+		<div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
+		<h4>카테고리</h4>
+			<hr>
+    		<ul class="nav nav-pills flex-column mb-auto">
+      			<li class="nav-item">
+	        		<a href="../info/infohome.jsp" class="nav-link">
+		         	 <svg class="bi me-2" width="16" height="16"></svg>
+		          	 일정관리
+		       		 </a>
+		     	 </li>
+			     <li class="nav-item">
+			        <a href="../info/info.jsp" class="nav-link">
+			          <svg class="bi me-2" width="16" height="16"></svg>
+			          내 정보관리
+			        </a>
+			      </li>
+			     <li class="nav-item">
+			       <a href="../info/meetlist.jsp" class="nav-link">
+			         <svg class="bi me-2" width="16" height="16"></svg>
+			         나의 참여모임
+			       </a>
+			     </li>
+			     <li class="nav-item">
+			       <a href="../info/hostlist.jsp" class="nav-link">
+			         <svg class="bi me-2" width="16" height="16"></svg>
+			         나의 개설모임
+			       </a>
+			     </li>
+			     <li class="nav-item">
+			       <a href="../info/wishlist.jsp" class="nav-link">
+			         <svg class="bi me-2" width="16" height="16"></svg>
+			         내가 찜한모임
+			       </a>
+		      	 </li>
+			      <li class="nav-item">
+			        <a href="../info/deleteform.jsp" class="nav-link">
+			          <svg class="bi me-2" width="16" height="16"></svg>
+			          회원탈퇴
+			        </a>
+		      	  </li>
+		    </ul>
+    	<hr>
+	</div>
+</div>

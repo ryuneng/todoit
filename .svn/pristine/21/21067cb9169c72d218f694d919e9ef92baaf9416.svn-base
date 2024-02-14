@@ -1,0 +1,58 @@
+package utils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DateUtils {
+
+	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	
+	/**
+	 * 날짜를 전달받아서 "2024-01-04"과 같은 형식의 문자열로 반환한다.
+	 * @param date 날짜
+	 * @return 형식화된 문자열
+	 */
+	public static String toText(Date date) {
+		if (date == null) {
+			return "";
+		}
+		
+		return DATE_FORMAT.format(date);
+	
+	}
+	
+	public static Date toDate(String text) throws ParseException {
+		if (text == null) {
+			return null;
+		}
+		
+		return DATE_FORMAT.parse(text);
+	}
+	
+	
+	
+	private static SimpleDateFormat DATE_FORMAT_KOREAN = new SimpleDateFormat("yyyy년 MM월 dd일");
+	
+	/**
+	 * 날짜를 전달받아서 "2024년 01월 04일"과 같은 형식의 문자열로 반환한다.
+	 * @param date 날짜
+	 * @return 형식화된 문자열
+	 */
+	public static String toTextKorean(Date date) {
+		if (date == null) {
+			return "";
+		}
+		
+		return DATE_FORMAT_KOREAN.format(date);
+	
+	}
+	
+	public static Date toDateKorean(String text) throws ParseException {
+		if (text == null) {
+			return null;
+		}
+		
+		return DATE_FORMAT_KOREAN.parse(text);
+	}
+}

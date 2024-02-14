@@ -1,0 +1,112 @@
+<%@page import="vo.Question"%>
+<%@page import="java.util.List"%>
+<%@page import="dto.Pagination"%>
+<%@page import="dao.QuestionDao"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'SUIT-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+   font-family: 'SUIT-Regular';
+}
+</style>
+
+<title>자주 묻는 질문 목록</title>
+
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="question" name="menu"/>
+</jsp:include>
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h1>자주묻는 질문</h1>
+
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+	// 관리자 admin(관리자 번호) 객체 생성
+	int admin = 0;
+	if (loginUser != null) {
+		admin = loginUser.getNo();
+	}
+	QuestionDao questionDao = new QuestionDao();
+	//questionList 반환할수 있도록한다.
+	List<Question> questionList = questionDao.getQuestion();
+	
+	
+%>
+
+				<form class="border bg-light p-3"
+            			method="post"
+            			action="question.jsp">
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+				  <div class="accordion-item">
+				    <h2 class="accordion-header">
+				      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+				      후기 작성은 어디서 하나요?
+				      </button>
+				    </h2>
+				    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+				       <div class="accordion-body"><i class="bi bi-arrow-return-right p-3 mt-5" >커뮤니티메뉴를 클릭한 후에 후기 작성이가능합니다.</i></div>
+				    </div>
+				  </div>
+<%
+	for(Question ff : questionList) {
+%>
+
+
+				  <div class="accordion-item">
+				    <h2 class="accordion-header">
+				      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-<%=ff.getNo() %>" aria-expanded="false" aria-controls="flush-collapseTwo">
+				      <%=ff.getTitle() %>
+				      </button>
+				    </h2>
+				    <div id="flush-collapse-<%=ff.getNo() %>" class="accordion-collapse collapse pt-2" data-bs-parent="#accordionFlushExample">
+				       <div class="accordion-body"><i class= "bi bi-arrow-return-right p-3 mt-5" ><%=ff.getContent() %></i></div>
+				    </div>
+				  </div>
+<%
+	}
+%>
+				  
+
+				</div>
+			</form>
+<%
+	// 관리자 번호가 동일번호일때 "새글"이라는 버튼생성
+	if(admin == 100001){
+%>
+
+				      <a class="btn btn-outline-primary" href="form.jsp">새 글</a>
+<%
+	// 관리자 번호가 아닐시에는 목록을 표시
+	}else {
+	
+%>
+<%
+	}
+%>
+			</div>
+		</div>
+</div>		
+</body>
+</html>

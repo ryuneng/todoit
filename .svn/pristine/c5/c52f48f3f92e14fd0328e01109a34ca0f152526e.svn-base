@@ -1,0 +1,37 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.User;
+
+public class UserDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+
+	public void insertUser(User user) throws SQLException {
+		ibatis.insert("users.insertUser", user);
+	}
+
+	public User getUserById(String id) throws SQLException{
+		User user = (User) ibatis.queryForObject("users.getUserById", id);
+		return user;
+	}
+	public User getUserByEmail(String email) throws SQLException{
+		return (User) ibatis.queryForObject("users.getUserByEmail", email);
+
+	}
+
+	public User getUserBynickname(String nickname) throws SQLException{
+		return (User) ibatis.queryForObject("users.getUserBynickname", nickname);
+	}
+
+
+	public void deleteById(String no) throws SQLException {
+		ibatis.delete("users.deleteUserBuid", no);
+	}
+
+}
+

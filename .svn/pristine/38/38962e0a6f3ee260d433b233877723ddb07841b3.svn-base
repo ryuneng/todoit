@@ -1,0 +1,299 @@
+<%@page import="java.util.List"%>
+<%@page import="dao.MeetingReplyDao"%>
+<%@page import="vo.MeetingReply"%>
+<%@page import="vo.User"%>
+<%@page import="dao.WishDao"%>
+<%@page import="vo.Wish"%>
+<%@page import="utils.StringUtils"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Meeting"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<title>TODOIT::모임상세</title>
+<style>
+
+</style>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="meeting" name="menu"/>
+</jsp:include>
+<div class="container">
+	<div class="row">
+		<div class="col-12 p-3">
+				<h1>모임 상세 페이지</h1>
+		</div>
+<%
+	LoginUser loginUser = (LoginUser)session.getAttribute("LOGIN_USER");
+	User user = new User();
+	//user.setNo(loginuser.getNo());
+	user.setNo(100010);
+
+	int no = Integer.valueOf(request.getParameter("no"));
+
+	//if (loginUser != null) {
+	
+%>
+		<div class="text-end mb-2">
+				<a class="btn btn-warning " href="modifyForm.jsp?no=<%=no %>" >수정</a>
+				<a class="btn btn-danger "  href="delete.jsp?no=<%=no%>">삭제</a>
+		</div>
+<%
+	//}
+%>
+		<div class="text-end mb-2">
+<%
+
+	
+	MeetingDao meetingDao = new MeetingDao();
+	Meeting meeting = meetingDao.getMeetingByNo(no);
+	
+	meeting.setViewCnt(meeting.getViewCnt() + 1);
+	meetingDao.updateMeetingByNo(meeting);
+%>
+		조회수 : <%=meeting.getViewCnt() %>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<div class="col-12 mb-3">
+			<table class="table table-bordered table table-striped">
+				<colgroup>
+					<col width="30%">
+					<col width="10%">
+					<col width="20%">
+					<col width="10%">
+					<col width="20%">
+				</colgroup>
+				<tbody class="align-middle">
+					<tr>
+						<td rowspan="5"><img alt="meeting 대표 이미지" src="../resources/images/meeting/<%=meeting.getImageName() %>" class="img-thumbnail"/></td>
+					</tr>
+					<tr>
+						<th>모임제목</th>
+						<td colspan="3"><%=meeting.getTitle() %></td>
+					</tr>
+					<tr>
+						<th>카테고리</th>
+						<td><%=meeting.getCategory().getName() %></td>
+<%
+	if (meeting.getActualPeople() == meeting.getMaxPeople()) {
+%>
+						<th>인원수</th>
+						<td ><span class="text-decoration-line-through"><%=meeting.getActualPeople() %> / <%=meeting.getMaxPeople() %> 명</span>
+										<strong style="color:red;">마감</strong></td>
+<%
+	} else {
+%>
+						<th>인원수</th>
+						<td ><%=meeting.getActualPeople() %> / <%=meeting.getMaxPeople() %> 명</td>
+<%
+	}
+%>
+					</tr>
+					<tr>
+						<th>지역</th>
+						<td><%=meeting.getAddress() %></td>
+<%
+	if (meeting.getPrice() != meeting.getDiscountPrice()) {
+%>
+						<th>모임 가격</th>
+						<td><span class="text-decoration-line-through"><%=meeting.getPrice() %></span>
+							<span style="color:red; bold"><%=meeting.getDiscountPrice() %></span> 원</td>
+<%
+	} else if (meeting.getPrice() == meeting.getDiscountPrice()) {
+%>
+						<th>모임 가격</th>
+						<td><%=meeting.getPrice() %>원</td>
+<%
+	}
+%>
+					</tr>
+					<tr>
+						<th>일정</th>
+						<td><%=DateUtils.toText(meeting.getStartDate()) %> ~ <%=DateUtils.toText(meeting.getEndDate()) %></td>
+						<th>호스트</th>
+						<td><img class="m-1" alt="호스트 이미지" src="../resources/images/user/user_1077114.png" style="width:50px"/>
+								<%=meeting.getUser().getNickname() %></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<hr>
+	</div>
+	<div class="row mb-3">
+		<div class="col-12">
+			<div class="bg-light p-3 mb-3 ">
+				<%=StringUtils.withBr(meeting.getContent()) %>
+			</div>
+			<div id="map" style="width: 100%; height:400px;" data-lat="<%=meeting.getLatitude() %>" data-lon="<%=meeting.getLongitude() %>">
+			
+			</div>
+			<div class="text-center mt-3">
+<%
+	WishDao wishDao = new WishDao();
+	
+	Wish wish = new Wish();
+	wish.setMeeting(meeting);
+	wish.setUser(user);
+	
+	wish = wishDao.getWish(wish);
+	
+	if(wish == null) {
+%>
+				<a class="btn btn-success " href="insertWish.jsp?no=<%=no%>">찜 <i class="bi bi-bag-check"></i></a>
+<%
+	} else if (wish.getUser().getNo() == user.getNo()) {
+%>
+				<a class="btn btn-success " href="deleteWish.jsp?no=<%=no%>">찜 <i class="bi bi-bag-check"></i></a>
+<%
+	}
+%>
+				<a class="btn btn-primary " href="../payments/form.jsp">참여 신청 <i class="bi bi-credit-card"></i></a>
+				<a class="btn btn-warning" >문의 <i class="bi bi-question-circle"></i></a>
+			</div>
+			<div class="text-end" >
+				<a class="btn btn-secondary"  href="list.jsp">목록</a>
+			</div>
+
+			<div>
+				<hr>
+				<h5>댓글</h5>
+				<div class="row">
+					<div class="col-12">
+						<form class="border bg-light p-3 mb-3"
+							method="post"
+							action="insertReply.jsp">
+							<input type="hidden" name="meetNo" value="<%=meeting.getNo() %>">
+							<div class="row mb-3">
+<%
+	MeetingReplyDao meetingReplyDao = new MeetingReplyDao();
+
+%>
+								<div class="col-sm-11">
+									<textarea rows="2" class="form-control" name="content">신규 댓글 작성 내용</textarea>
+								</div>
+								<div class="col-sm-1 ">
+									<button type="submit" class="btn btn-outline-primary" >등록</button>
+								</div>
+							</div>
+						</form>
+<%
+	List<MeetingReply> meetReplyList = meetingReplyDao.getMeetingReplies(meeting.getNo());
+
+for(MeetingReply meetingReply : meetReplyList) {
+%>
+						<div class="card mb-3">
+							<div class="card-header">
+								<span style="font-weight:bold"><%=meetingReply.getUser().getNickname() %></span>
+								<small><%=meetingReply.getUpdatedDate() %></small>
+								<a href="deleteReply.jsp?no=<%=meeting.getNo() %>&replyNo=<%=meetingReply.getNo() %>"
+									class="btn btn-danger btn-sm float-end"><i class="bi bi-trash"></i></a>
+								<a href="modifyReply.jsp?no=<%=meeting.getNo() %>&replyNo=<%=meetingReply.getNo() %>"
+									class="btn btn-warning btn-sm float-end"><i class="bi bi-eraser"></i></a>
+							</div>
+							<div class="card-body">
+								<p class="card-text"><%=meetingReply.getContent() %></p>
+<%
+	List<MeetingReply> meetReReplyList = meetingReplyDao.getReReplies(meetingReply.getNo());
+
+	for (MeetingReply meetingReReply : meetReReplyList) {
+%>
+								<div class="card-header border">
+									<span style="font-weight:bold"><%=meetingReReply.getUser().getNickname() %></span>
+									<small><%=meetingReReply.getUpdatedDate() %></small>
+									<a href="deleteReply.jsp?no=<%=meeting.getNo() %>&replyNo=<%=meetingReReply.getNo() %>"
+										class="btn btn-danger btn-sm float-end mb-1"><i class="bi bi-trash"></i></a>
+									<a href="modifyReply.jsp?no=<%=meeting.getNo() %>&replyNo=<%=meetingReReply.getNo() %>"
+										class="btn btn-danger btn-sm float-end mb-1"><i class="bi bi-trash"></i></a>
+								</div>
+								<div class="card-body border mb-3">
+									<p class="card-text"><%=meetingReReply.getContent() %></p>
+								</div>
+<%
+	}
+%>
+								<form class="border bg-light p-3 mb-3"
+									method="post"
+									action="insertReReply.jsp">
+									<input type="hidden" name="meetNo" value="<%=meeting.getNo() %>">
+									<input type="hidden" name="partentsReply" value="<%=meetingReply.getNo() %>">
+									<div class="row mb-3">
+
+										<div class="col-sm-11">
+											<textarea rows="2" class="form-control" name="content">신규 댓글 작성 내용</textarea>
+										</div>
+										<div class="col-sm-1 ">
+											<button type="submit" class="btn btn-outline-primary" >등록</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+<%
+	}
+%>
+							<hr>
+						<div>
+							<h5>다른 모임 추천</h5>
+							<div class="row">
+								<div class="card col-3 p-3">
+									<img src="../resources/images/meeting/meeting.jpg" class="card-img-top" alt="모임대표 이미지">
+									<div class="card-body">
+										<p class="card-text text-center"><strong>제목만</strong></p>
+									</div>
+								</div>
+								<div class="card col-3 p-3">
+									<img src="../resources/images/meeting/meeting.jpg" class="card-img-top" alt="모임대표 이미지">
+									<div class="card-body">
+										<p class="card-text text-center"><strong>제목만</strong></p>
+									</div>
+								</div>
+								<div class="card col-3 p-3">
+									<img src="../resources/images/meeting/meeting.jpg" class="card-img-top" alt="모임대표 이미지">
+									<div class="card-body">
+										<p class="card-text text-center"><strong>제목만</strong></p>
+									</div>
+								</div>
+								<div class="card col-3 p-3">
+									<img src="../resources/images/meeting/meeting.jpg" class="card-img-top" alt="모임대표 이미지">
+									<div class="card-body">
+										<p class="card-text text-center"><strong>제목만</strong></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8969454c0c7cb8ee61ed937eb735f33c&libraries=services"></script>
+<script>
+	var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+	var lat = container.getAttribute("data-lat")
+	var lon = container.getAttribute("data-lon")
+	var options = { //지도를 생성할 때 필요한 기본 옵션
+		center: new kakao.maps.LatLng(lat, lon), //지도의 중심좌표.
+		level: 3 //지도의 레벨(확대, 축소 정도)
+	};
+	
+	var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+	
+	
+	
+</script>
+</body>
+</html>

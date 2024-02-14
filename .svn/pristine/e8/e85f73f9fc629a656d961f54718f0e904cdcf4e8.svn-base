@@ -1,0 +1,42 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<title>TODOIT::모임상세</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="meeting" name="menu"/>
+</jsp:include>
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h1>모임 상세</h1>
+			<table>
+				<colgroup>
+					<col width="15%">
+					<col width="35%">
+					<col width="15%">
+					<col width="35%">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>모임제목</th>
+						<td>독서 클럽</td>
+						<th>최대 인원수</th>
+						<td>30</td>
+					</tr>
+				</tbody>
+			</table>
+			
+		</div>
+	</div>
+</div>
+</body>
+</html>

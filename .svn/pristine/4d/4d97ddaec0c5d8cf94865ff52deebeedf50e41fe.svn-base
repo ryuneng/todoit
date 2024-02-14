@@ -1,0 +1,25 @@
+<%@page import="vo.Category"%>
+<%@page import="utils.StringUtils"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+ 	LoginUser loginuser = (LoginUser) session.getAttribute("LOGIN_USER");
+	System.out.println(loginuser);
+	String title = request.getParameter("title");
+	int catNo = NumberUtils.toInt(request.getParameter("catNo"));
+	int maxPeople = NumberUtils.toInt(request.getParameter("maxPeople"));
+	String address = request.getParameter("address");
+	int price = NumberUtils.toInt(request.getParameter("price"));
+	int discountPrice = NumberUtils.toInt(request.getParameter("discountPrice"));
+	String startDate = request.getParameter("startDate");
+	String endDate = request.getParameter("endDate");
+	String content = StringUtils.withBr(request.getParameter("content"));
+	String approve = request.getParameter("approve");
+	
+	Category category = new Category();
+	
+	// image는 upfile 로 넘어온다.
+	
+%>

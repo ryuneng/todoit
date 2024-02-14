@@ -1,0 +1,27 @@
+<%@page import="vo.Meeting"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dao.MeetingDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	int no = Integer.valueOf(request.getParameter("no"));
+	
+	MeetingDao meetingDao = new MeetingDao();
+	
+	Meeting meeting = meetingDao.getMeetingByNo(no);
+	
+/* 	if (meeting.getUser().getNo() != loginUser.getNo()){
+		response.sendRedirect("detail.jsp?no=" + no + "&error=deny");
+		return;
+	} */
+	
+	meetingDao.deleteMeetingByMeetingNo(no);
+
+	response.sendRedirect("list.jsp");
+
+
+%>

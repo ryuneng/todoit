@@ -1,0 +1,27 @@
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	int meetNo = NumberUtils.toInt(request.getParameter("meetNo"));
+	String content = request.getParameter("content");
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	MeetingReply meetingReply = new MeetingReply();
+
+	MeetingReplyDao meetingReplyDao = new MeetingReplyDao();
+	
+	Meeting meeting = new Meeting();
+	meeting.setNo(meetNo);
+	
+	meetingReply.setContent(content);
+	meetingReply.setMeeting(meeting);
+	meetingReply.setUser(user);
+	
+	
+	meetingReplyDao.insertMeetingReply(meetingReply);
+	
+	response.sendRedirect("detail.jsp?meetNo=" + meetNo);
+%>

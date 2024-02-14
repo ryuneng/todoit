@@ -1,0 +1,35 @@
+<%@page import="dao.PaymentDao"%>
+<%@page import="vo.Apply"%>
+<%@page import="vo.Payment"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="vo.User"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+	
+	PaymentDao paymentDao = new PaymentDao();
+	paymentDao.insertOrder();
+	
+	// 요청파라미터 값 조회
+	int applyNo = Integer.parseInt(request.getParameter("applyNo"));
+	int price = Integer.parseInt(request.getParameter("price"));
+	
+	
+	// Apply 객체 생성 후 참여번호 저장
+	Apply apply = new Apply();
+	apply.setNo(applyNo);
+	
+	// Payment 객체 생성 후 가격 저장
+	Payment payment = new Payment();
+	payment.setPrice(price);
+	
+	
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	
+	
+	
+	
+%>

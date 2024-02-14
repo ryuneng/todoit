@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="meeting" >
+	
+	<!-- 신규 모임 한 개 저장 -->
+	<insert id="insertMeeting" parameterClass="vo.Meeting">
+		insert into meeting
+		(MEETING_NO, MEETING_TITLE, MEETING_MAX_PEOPLE, MEETING_ADDRESS,
+		MEETING_PRICE, MEETING_DISCOUNT_PRICE, MEETING_START_DATE, MEETING_END_DATE, MEETING_CONTENT,
+		MEETING_APPROVE, MEETING_CATEGORY_NO, USER_NO, IMAGE_NAME, MEETING_LATITUDE, MEETING_LONGITUDE)
+		values
+		(meeting_seq.nextval, #title#, #maxPeople#, #address#,
+		#price#, #discountPrice#, #startDate#, #endDate#, #content#,
+		#approve#, #category.no#, #user.no#, #imageName#, #latitude#, #longitude#)
+	</insert>
+	
+	<!-- 모임 번호로 모임 1개 조회 -->
+	<select id="getMeetingByNo" parameterClass="int" resultClass="vo.Meeting">
+		select
+			M.MEETING_NO                     as no,
+			M.MEETING_TITLE				     as title,
+			M.MEETING_MAX_PEOPLE		     as maxPeople,
+			M.MEETING_ACTUAL_PEOPLE		     as actualPeople,
+			M.MEETING_ADDRESS			     as address,
+			M.MEETING_PRICE				     as price,
+			nvl(M.MEETING_DISCOUNT_PRICE, 0) as discountPrice,
+			M.MEETING_START_DATE		     as startDate,
+			M.MEETING_END_DATE			     as endDate,
+			M.MEETING_CONTENT			     as content,
+			M.MEETING_VIEW_CNT			     as viewCnt,
+			M.MEETING_DELETED			     as deleted,
+			M.MEETING_CREATED_DATE		     as createdDate,
+			M.MEETING_UPDATED_DATE		     as updatedDate,
+			M.MEETING_APPROVE			     as approve,
+	        M.MEETING_CATEGORY_NO		     as "category.no",
+	        C.MEETING_CATEGORY_NAME		     as "category.name",
+	        U.USER_NO					     as "user.no",
+	        U.USER_NICKNAME				     as "user.nickname",
+	        U.USER_CONTENT				     as "user.content",
+	        U.files_name					 as "user.filename",
+	        M.IMAGE_NAME				     as imageName,
+	        M.WISH_CNT					     as wishCnt,
+	        M.SCORE_AVERAGE				     as scoreAverage,	
+	        M.MEETING_FULL				     as full,
+	        M.MEETING_LATITUDE			     as latitude,
+	        M.MEETING_LONGITUDE			     as longitude
+		from
+			MEETING M, USERS U, MEETING_CATEGORIES C
+		where
+			M.MEETING_NO = #no#
+		and M.USER_NO = U.USER_NO
+		AND M.MEETING_CATEGORY_NO = C.MEETING_CATEGORY_NO
+	</select>
+	
+		<!-- 호스트가 개설한 모임 리스트 조회 -->
+	<select id="getMeetingsByUserNo" parameterClass="int" resultClass="vo.Meeting">
+		select
+			M.MEETING_NO                     as no,
+			M.MEETING_TITLE				     as title,
+			M.MEETING_MAX_PEOPLE		     as maxPeople,
+			M.MEETING_ACTUAL_PEOPLE		     as actualPeople,
+			M.MEETING_ADDRESS			     as address,
+			M.MEETING_PRICE				     as price,
+			nvl(M.MEETING_DISCOUNT_PRICE, 0) as discountPrice,
+			M.MEETING_START_DATE		     as startDate,
+			M.MEETING_END_DATE			     as endDate,
+			M.MEETING_CONTENT			     as content,
+			M.MEETING_VIEW_CNT			     as viewCnt,
+			M.MEETING_DELETED			     as deleted,
+			M.MEETING_CREATED_DATE		     as createdDate,
+			M.MEETING_UPDATED_DATE		     as updatedDate,
+			M.MEETING_APPROVE			     as approve,
+	        M.MEETING_CATEGORY_NO		     as "category.no",
+	        C.MEETING_CATEGORY_NAME		     as "category.name",
+	        U.USER_NO					     as "user.no",
+	        U.USER_NICKNAME				     as "user.nickname",
+	        U.USER_CONTENT				     as "user.content",
+	        M.IMAGE_NAME				     as imageName,
+	        M.WISH_CNT					     as wishCnt,
+	        M.SCORE_AVERAGE				     as scoreAverage,	
+	        M.MEETING_FULL				     as full,
+	        M.MEETING_LATITUDE			     as latitude,
+	        M.MEETING_LONGITUDE			     as longitude
+		from
+			MEETING M, USERS U, MEETING_CATEGORIES C
+		where
+			M.USER_NO = #no#
+		and M.USER_NO = U.USER_NO
+		AND M.MEETING_CATEGORY_NO = C.MEETING_CATEGORY_NO
+	</select>
+	
+	<!-- 모임 삭제여부 Y로 변경 -->
+	<update id="deleteMeetingByMeetingNo" parameterClass="int">
+		update MEETING
+		set
+			meeting_deleted = 'Y'
+		where
+			meeting_no = #no#
+	</update>
+	
+	<!-- 게시글 목록 전체조회 -->
+	<select id="getMeetings" parameterClass="map" resultClass="vo.Meeting">
+		select
+			A.meeting_no 			 as no,
+			A.meeting_title 		 as title,
+			A.meeting_max_people 	 as maxPeople,
+			A.meeting_actual_people  as actualPeople,
+			A.meeting_address 		 as address,
+			A.meeting_price 		 as price,
+			nvl(A.meeting_discount_price, 0) as discountPrice, <!-- meeting_discount_price에 null이 들어있을 때 값을 0으로 -->
+			A.meeting_start_date 	 as startDate,
+			A.meeting_end_date 		 as endDate,
+			A.meeting_content 		 as content,
+			A.meeting_view_cnt 		 as viewCnt,
+			A.meeting_deleted 		 as deleted,
+			A.meeting_created_date   as createdDate,
+			A.meeting_updated_date   as updatedDate,
+			A.meeting_approve 		 as approve,
+			C.meeting_category_no	 as "category.no",
+			C.meeting_category_name  as "category.name",
+			A.user_no 				 as "user.no",
+			B.user_name 			 as "user.name",
+			A.image_name 			 as imageName,
+			A.wish_cnt 				 as wishCnt,
+			A.score_average 		 as scoreAverage,
+			A.meeting_full 			 as full
+		from
+			(select
+				<isEqual property="sort" compareValue="date">
+					row_number() over (order by meeting_no desc) num,				
+				</isEqual>
+				<isEqual property="sort" compareValue="like">
+					row_number() over (order by wish_cnt desc) num,				
+				</isEqual>
+				<isEqual property="sort" compareValue="lowestPrice"> <!-- nvl2(1, 2, 3) : 1이 null이 아닐 때 2값이 나오고, null일 때 3값이 나옴 -->
+					row_number() over (order by  case
+                                                 when meeting_discount_price = 0 then meeting_price
+                                                 else meeting_discount_price
+                                                 end asc) num,				
+				</isEqual>
+				<isEqual property="sort" compareValue="highestPrice">
+					row_number() over (order by case
+                                                when meeting_discount_price = 0 then meeting_price
+                                                else meeting_discount_price
+                                                end desc) num,				
+				</isEqual>
+				<isEqual property="sort" compareValue="score">
+					row_number() over (order by score_average desc) num,				
+				</isEqual>
+				meeting_no,
+				meeting_title,
+				meeting_max_people,
+				meeting_actual_people,
+				meeting_address,
+				meeting_price,
+				meeting_discount_price,
+				meeting_start_date,
+				meeting_end_date,
+				meeting_content,
+				meeting_view_cnt,
+				meeting_deleted,
+				meeting_created_date,
+				meeting_updated_date,
+				meeting_approve,
+				meeting_category_no,
+				user_no,
+				image_name,
+				wish_cnt,
+				score_average,
+				meeting_full
+			 from
+			 	meeting
+			 where
+			 	meeting_deleted = 'N'
+			 	<isNotNull property="categoryNo"> 				   <!-- categoryNo가 Null이 아니라면 이 쿼리가 사용되게 -->
+					and meeting_category_no = #categoryNo#
+				</isNotNull>
+			 	<isEqual property="opt" compareValue="title"> 	   <!-- if문 같은 기능(opt가 title일 때 내부작업 실행) -->
+			 		and meeting_title like '%' || #keyword# || '%' <!-- like '%keyword%' : "keyword"가 포함되어 있는 모든 데이터 -->
+			 	</isEqual>										   <!-- || : 여러 문자열을 연결하는 함수 -->
+			 	<isEqual property="opt" compareValue="writer">
+			 		and user_no in (select user_no
+			 						from users
+			 						where user_name like '%' || #keyword# || '%')
+			 	</isEqual>
+			 	<isEqual property="opt" compareValue="content">
+			 		and meeting_content like '%' || #keyword# || '%'
+			 	</isEqual>
+			) A, users B, meeting_categories C
+		where A.num between #begin# and #end#
+		and A.user_no = B.user_no
+		and A.meeting_category_no = c.meeting_category_no
+		order by a.num asc
+	</select>
+	
+	<!-- 게시글 전체 행 개수 조회 -->
+	<select id="getTotalRows" parameterClass="map" resultClass="int">
+		select
+			count(*)
+		from
+			meeting
+		where
+			meeting_deleted = 'N'
+			<isNotNull property="categoryNo">
+				and meeting_category_no = #categoryNo#
+			</isNotNull>
+			<isEqual property="opt" compareValue="title">
+				and meeting_title like '%' || #keyword# || '%'
+			</isEqual>
+			<isEqual property="opt" compareValue="writer">
+				and user_no in (select user_no
+								from users
+								where user_name like '%' || #keyword# || '%')
+			</isEqual>
+			<isEqual property="opt" compareValue="content">
+				and meeting_content like '%' || #keyword# || '%'
+			</isEqual>
+	</select>
+
+	<!-- 모임 찜 개수 증감 반영 -->
+	<update id="updateMeetingWishByNo" parameterClass="vo.Meeting" >
+		update
+			meeting
+		set
+			wish_cnt = (select count(*)
+						from wishes
+						where meeting_no = #no#)
+		where meeting_no = #no#
+	</update>
+	
+	<!-- 평점조회 -->
+	<update id="updateMeetingScoreByNo" parameterClass="vo.Meeting" >
+		update
+			meeting
+		set
+			score_average = (select avg(score)
+                                    from COMMUNITY
+                                    where meeting_no = #no#
+                                    and comm_category_no = 100001 <!-- 리얼후기 카테고리번호만 해당되게 고정 -->
+                                    and score != 0)
+		where meeting_no = #no#
+	</update>
+	
+	<!-- 모임 수정 -->
+	<update id="updateMeetingByNo" parameterClass="vo.Meeting">
+		update
+			meeting
+		set	
+			MEETING_TITLE = #title#,
+			MEETING_MAX_PEOPLE = #maxPeople#,
+			MEETING_ADDRESS = #address#,
+			MEETING_PRICE = #price#,
+			MEETING_DISCOUNT_PRICE = #discountPrice#,
+			MEETING_START_DATE = #startDate#,
+			MEETING_END_DATE = #endDate#,
+			MEETING_CONTENT = #content#,
+			MEETING_VIEW_CNT = #viewCnt#,
+			MEETING_UPDATED_DATE = sysdate,
+			MEETING_APPROVE = #approve#,
+	        MEETING_CATEGORY_NO = #category.no#,
+	        IMAGE_NAME = #imageName#,
+	        MEETING_FULL = #full#,
+	        MEETING_LATITUDE = #latitude#,
+	        MEETING_LONGITUDE = #longitude#
+		where
+			MEETING_NO = #no#
+	</update>
+
+</sqlMap>

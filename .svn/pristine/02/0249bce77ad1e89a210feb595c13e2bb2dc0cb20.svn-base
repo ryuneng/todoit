@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="host-management">
+
+	<!--나의 개설모임-->
+	<select id="getHostCreated" parameterClass="int" resultClass="vo.Meeting">
+		select
+				meeting_no				as no,
+				image_name 				as imageName,
+				meeting_title		 	as title,
+				meeting_created_date 	as createdDate,
+				meeting_start_date 		as startDate,
+				meeting_end_date 		as endDate
+		from meeting;
+	</select>
+	
+	<!--모임관리 현황-->
+	<select id="getHostStatus" parameterClass="int" resultClass="dto.MeetingStatusDto">
+		select
+			   meeting_no 					as no,
+			   count(*) 					meetingCnt,
+			   sum(meeting_total_pay_price) totalPrice,
+			   sum(meeting_actual_people) 	userCnt
+		from meeting
+		where user_no = 100001
+		and meeting_deleted = 'N'
+	</select>
+	
+	<!--모임관리 현황 모달창-->
+	<select id="getHostStatusDetail" parameterClass="int" resultClass="vo.Meeting">
+		select 
+			   meeting_no    		 	as no,
+		       image_name    	     	as imageName,
+		       meeting_title 	     	as title,
+		       meeting_actual_people 	as actualPeople,
+		       meeting_total_pay_price  as totalPayPrice,
+		       meeting_view_cnt 		as viewCnt
+		       
+		from   meeting
+		where  user_no = 100001
+		and    meeting_deleted = 'N'
+	</select>
+	
+	<!--알림-->
+	<select id="getHostnotice" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select 
+				m.meeting_no 			as no,
+				m.image_name 			as imageName, 
+				m.meeting_title 		as title, 
+				a.apply_applied_date 	as day, 
+				'APPLY' 				as alertType
+		from    meeting m, apply_users a
+		where   m.user_no = 100001
+		and     meeting_approve = 'N'
+		and     m.meeting_no = a.meeting_no
+		union
+		select
+				m.meeting_no,
+				m.image_name,
+				m.meeting_title,
+				mr.meeting_reply_created_date, 
+				'REPLY'
+		from 	meeting m, meeting_replies mr
+		where 	m.user_no = 100001
+		and 	meeting_approve = 'N'
+		and 	m.meeting_no = mr.meeting_no
+	</select>
+	
+	<!-- 달력 -->
+	<select id="getHostCalendar" parameterClass="int" resultClass="vo.Meeting">
+	 select
+	 		meeting_no  		as no,
+	 		meeting_title 		as title,
+	 		meeting_start_date 	as startDate,
+	 		meeting_end_date 	as endDate,
+	 	    meeting_address 	as address,
+	 	    meeting_latitude 	as latitude
+	 	    meeting_longitude 	as longitude
+ 	from 	meeting
+ 	where 	user_no = 100001
+    and meeting_deleted = 'N'
+    </select>
+    
+    <!-- 모임관리버튼(상단)-->
+    <select id="getHostDetailTitle" parameterClass="int" resultClass="vo.Meeting">
+    select
+    		meeting_no 		as no,
+    		image_name 		as imageName,
+    		meeting_title 	as title,
+ 	from meeting
+ 	where user_no = 100001
+ 	and meeting_deleted = 'N'
+ 	</select>
+ 	
+ 	<!-- 모임관리버튼(참여자관리) -->
+ 	<select id="getHostDetailUsers" parameterClass="int" resultClass="vo.Meeting">
+	 select
+	 		u.user_nickname 	 as "user.nickName",
+	 		a.apply_applied_date as "applyUser.appliedDate",
+	 		a.apply_accepted  	 as "applyUser.accepted",
+	 		p.pay_completed 	 as "payments.completed"
+	 from users u, apply_users a, payments p ,meeting m 
+	 where m.user_no = 100002
+	 and a.user_no = u.user_no
+	 and a.apply_no = p.apply_no
+	 and u.user_no = m.user_no
+  	and meeting_deleted = 'N'
+  	</select>
+</sqlMap>

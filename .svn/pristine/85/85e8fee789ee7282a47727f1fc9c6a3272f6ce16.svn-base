@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   	
+<sqlMap namespace="users">
+
+	<insert id="insertUser" parameterClass="vo.User">
+		insert into users
+		(user_no, user_id, user_password, user_birthDate, user_nickname, user_gender,
+		 user_status, user_name, user_email, user_tel, user_createDate, user_content, 
+		 address_no, files_name)
+		values
+		(users_seq.nextval, #id#, #password#, #birthDate#, #nickname#, #gender#,#status#,#name#,
+		 #email#, #tel#, #createDate#,#content#,#addresses.no#, #filename#)
+
+	</insert>
+	
+	<select id="getUserById" parameterClass="string" resultClass="vo.User">
+		select
+			a.user_no 				as no,
+			a.user_id				as id,
+			a.user_password			as password,
+            a.user_birthdate		as birthDate,
+			a.user_nickname			as nickname,
+			a.user_gender			as gender,
+			a.user_status			as status,
+			a.user_name				as name,
+			a.user_email			as email,
+			a.user_tel				as tel,
+			a.user_createdate	    as createDate,
+			a.user_content			as content,
+			b.address_no			as "addresses.no",
+			b.city_name				as "addresses.city_name",
+			b.gu_name				as "addresses.gu_name",
+			b.address_no2			as "addresses.address_no2",
+			a.files_name			as Files_name
+
+		from
+			users a, addresses b
+		where
+			user_id= #vaule#
+            and
+            a.address_no = b.address_no
+	</select>
+	
+	<delete id="deleteUserByNo" parameterClass="int">
+		delete
+			*
+		from
+			users
+		where
+			user_no=#value#	
+	</delete>
+	
+	<select id="getUserBynickname" parameterClass="string" resultClass="vo.User">
+		select
+			user_no 			as no,
+			user_id 			as id,
+			user_password 		as password,
+			user_birthDate      as birthDate,
+			user_gender         as gender,
+			user_status			as status,
+			user_name 			as name,
+			user_email 			as email,
+			user_tel 			as tel,
+			user_createDate 	as createDate,
+			user_content 		as content,
+			address_no 			as address_no,
+			files_name     		as files_name
+		from
+			users
+		where
+			user_nickname = #value#
+	</select>
+	<select id="getUserByEmail" parameterClass="string" resultClass="vo.User">
+		select
+			user_no 			as no,
+			user_id 			as id,
+			user_password 		as password,
+			user_birthDate      as birthDate,
+			user_gender         as gender,
+			user_status			as status,
+			user_name 			as name,
+			user_email 			as email,
+			user_tel 			as tel,
+			user_createDate 	as createDate,
+			user_content 		as content,
+			address_no 			as address_no,
+			files_name     		as files_name
+		from
+			users
+		where
+			user_email = #value#
+	</select>
+	
+	<update id="updateUser" parameterClass="vo.User">
+		update 
+			Users
+		set
+			user_id	= #id#,
+			user_password = #password#,
+			user_name = #name#,
+			user_nickname = #nickname#,
+			user_birthdate = #birthDate#,
+			user_gender = #gender#,
+			user_email = #email#,
+			user_tel = #tel#,
+			address_no = #addresses.no#,
+			user_content = #content#
+		where
+			user_no = #no#
+	</update>
+	
+	
+</sqlMap>

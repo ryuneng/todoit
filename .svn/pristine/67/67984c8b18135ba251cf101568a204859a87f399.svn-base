@@ -1,0 +1,41 @@
+<%@page import="dto.LoginUser"%>
+<%@page import="vo.Meeting"%>
+<%@page import="vo.User"%>
+<%@page import="dao.WishDao"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Wish"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	// 요청파라미터값 조회
+	int meetNo = Integer.valueOf(request.getParameter("meetNo"));
+
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	Meeting meeting = new Meeting();
+	meeting.setNo(meetNo);
+	
+	WishDao wishDao = new WishDao();
+	
+	MeetingDao meetingDao = new MeetingDao();
+	Meeting savedMeeting = meetingDao.getMeetingByNo(meetNo);
+	
+	Wish wish = new Wish();
+	wish.setMeeting(meeting);
+	wish.setUser(user);
+	
+	Wish savedWish = wishDao.getWish(wish);
+	
+	if(savedWish == null) {
+		wishDao.addWish(wish);
+	} else if (wish.getUser().getNo() == user.getNo()) {
+		wishDao.deleteWish(wish);
+	}
+	
+	meetingDao.updateMeetingWishByNo(meeting);
+	
+	response.sendRedirect("detail.jsp?meetNo=" + meetNo);
+%>

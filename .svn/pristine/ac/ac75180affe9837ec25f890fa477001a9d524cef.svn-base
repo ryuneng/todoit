@@ -1,0 +1,26 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Payment;
+import vo.User;
+
+public class PaymentDao {
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	// 결제 시 주문번호 생성
+	public void insertOrder() throws SQLException {
+		ibatis.insert("payments.insertOrder");
+	}
+	
+	// 유저 포인트 조회
+	// * 메소드 타입 = payments.xml의 resultClass 타입
+	// * userNo 타입 = payments.xml의 parameterClass 타입
+	public int getPointByUserNo(int userNo) throws SQLException {
+		return (int) ibatis.queryForObject("payments.getPointByUserNo", userNo);
+	}
+	
+}

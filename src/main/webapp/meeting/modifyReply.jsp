@@ -1,0 +1,32 @@
+<%@page import="vo.User"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Meeting"%>
+<%@page import="vo.MeetingReply"%>
+<%@page import="dao.MeetingReplyDao"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	int meetNo = Integer.valueOf(request.getParameter("meetNo"));
+	String content = request.getParameter("content");
+	int replyNo = Integer.valueOf(request.getParameter("replyNo"));
+	int currentPage = Integer.parseInt(request.getParameter("page"), 1);
+
+	MeetingReplyDao meetingReplyDao = new MeetingReplyDao();
+	MeetingReply meetingReply = meetingReplyDao.getReplyByNo(replyNo);
+	System.out.println(meetingReply);
+	MeetingDao meetingDao = new MeetingDao();
+	Meeting meeting = meetingDao.getMeetingByNo(meetNo);
+	
+	meetingReply.setContent(content);
+	meetingReply.setMeeting(meeting);
+	meetingReply.setUser(user);
+
+	meetingReplyDao.updateMeetingByNo(meetingReply);
+	
+	response.sendRedirect("detail.jsp?meetNo=" + meetNo + "&page=" + currentPage);
+%>

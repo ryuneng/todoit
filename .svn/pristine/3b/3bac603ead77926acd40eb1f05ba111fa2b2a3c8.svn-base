@@ -1,0 +1,61 @@
+package vo;
+
+import java.util.Date;
+
+public class PointHistory {
+	private int no;	 		 // 포인트 히스토리 고유번호
+	private User user;		 // 유저번호
+	private int usedPoint;	 // 사용포인트
+	private int savedPoint;  // 적립포인트
+	private Date createdHistoryDate; // 히스토리 생성일자
+	
+	public PointHistory() {}
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public int getUsedPoint() {
+		return usedPoint;
+	}
+
+	public void setUsedPoint(int usedPoint) {
+		this.usedPoint = usedPoint;
+	}
+
+	public int getSavedPoint() {
+		return savedPoint;
+	}
+
+	public void setSavedPoint(int savedPoint) {
+		this.savedPoint = savedPoint;
+	}
+	
+	public Date getCreatedHistoryDate() {
+		return createdHistoryDate;
+	}
+
+	public void setCreatedHistoryDate(Date createdHistoryDate) {
+		this.createdHistoryDate = createdHistoryDate;
+	}
+
+	@Override
+	public String toString() {
+		return "PointHistory [no=" + no + ", user=" + user + ", usedPoint=" + usedPoint + ", savedPoint=" + savedPoint
+				+ ", createdHistoryDate=" + createdHistoryDate + "]";
+	}
+	
+	
+}

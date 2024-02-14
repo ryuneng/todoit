@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="question">
+	<!--  자주묻는 질문 목록조회 -->
+	<insert id="insertQuestion" parameterClass="vo.Question">
+		insert into question
+			(question_no, question_title, question_content)
+		values
+			(question_seq.nextval, #title#, #content#)
+	</insert>
+
+	<select id="getQuestion" parameterClass="map" resultClass="vo.Question">
+		select 
+			question_no			as no,
+			question_title 		as title,
+			question_content	as content
+		from 
+			question
+	</select>
+
+</sqlMap>

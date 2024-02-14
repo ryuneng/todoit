@@ -1,0 +1,93 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Banner;
+import vo.Meeting;
+
+public class MainDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	/**
+	 * 
+	 * @return 배너이미지
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Banner> getBanner() throws SQLException {
+		return (List<Banner>) ibatis.queryForList("main.getBanner");
+		
+	}
+	
+	/**
+	 * 
+	 * @return 주간인기베스트 
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getWeeklyBest() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getWeeklyBest");
+		
+	}
+	
+	/**
+	 * 
+	 * @return 스터디/자기계발 베스트
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getStudyCat() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getStudyCat");
+		
+	}
+	
+	/**
+	 * 
+	 * @return 문화예술 베스트
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getArtCat() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getArtCat");
+		
+	}
+	
+	/**
+	 * 
+	 * @return 운동/액티비티 베스트
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getExerciseCat() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getArtCat");
+	}
+	
+	/**
+	 * 
+	 * @return 취미 베스트
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getHobbyCat() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getHobbyCat");
+			
+	}
+	
+	/**
+	 * 
+	 * @return 푸드 베스트
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getFoodCat() throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("main.getHobbyCat");
+			
+	}
+	
+	
+}

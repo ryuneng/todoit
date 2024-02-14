@@ -1,0 +1,47 @@
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Meeting"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dao.PaymentDao"%>
+<%@page import="vo.ApplyUser"%>
+<%@page import="vo.Payment"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="vo.User"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+	
+	// 0. 요청파라미터 값 조회
+	int meetingNo = Integer.parseInt(request.getParameter("meetNo"));
+	
+	// 1. User 객체 생성 후 로그인중인 유저번호 저장
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	// 2. Meeting 객체 생성 후 모임정보 저장
+	Meeting meeting = new Meeting();
+	meeting.setNo(meetingNo);
+
+	// 3. PaymentDao 객체 생성 후 시퀀스 획득
+	PaymentDao paymentDao = new PaymentDao();
+	int applyNo = paymentDao.getApplyNo();
+	
+	// 4. ApplyUser 객체 생성 및 정보 저장
+	ApplyUser applyUser = new ApplyUser();
+	applyUser.setNo(applyNo);      // 시퀀스값을 참여번호로 저장
+	applyUser.setUser(user);	   // 유저정보 저장
+	applyUser.setMeeting(meeting); // 모임정보 저장
+	
+	// 5. 결제완료 후 참여정보 생성
+	paymentDao.insertApplyUser(applyUser);
+	
+	// 6. Payment 객체 생성 후 참여정보 저장
+	Payment payment = new Payment();
+	payment.setApplyUser(applyUser);
+	
+	// 7. 결제정보 생성
+	paymentDao.insertPayment(payment);
+	
+	// 8. 재요청 URL 응답으로 결제완료 페이지 전송
+	response.sendRedirect("completedPayment.jsp?applyNo=" + applyNo);
+%>

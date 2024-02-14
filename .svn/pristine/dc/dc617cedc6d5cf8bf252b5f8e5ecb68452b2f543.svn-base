@@ -1,0 +1,67 @@
+package vo;
+
+import java.util.Date;
+
+public class Payment {
+	private int orderNo;		 // 주문번호
+	private int price;			 // 결제금액
+	private String method;		 // 결제수단
+	private Date payDate;		 // 결제일자
+	private ApplyUser applyUser; // 참여자
+	private int usedPoint;		 // 사용포인트
+	private String payCompleted; // 결제완료여부
+	
+	public Payment() {}
+	
+	public int getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getMethod() {
+		return method;
+	}
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	public Date getPayDate() {
+		return payDate;
+	}
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
+	}
+	public ApplyUser getApplyUser() {
+		return applyUser;
+	}
+	public void setApplyUser(ApplyUser applyUser) {
+		this.applyUser = applyUser;
+	}
+	public int getUsedPoint() {
+		return usedPoint;
+	}
+	public void setUsedPoint(int usedPoint) {
+		this.usedPoint = usedPoint;
+	}
+	
+	public String getPayCompleted() {
+		return payCompleted;
+	}
+
+	public void setPayCompleted(String payCompleted) {
+		this.payCompleted = payCompleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Payment [orderNo=" + orderNo + ", price=" + price + ", method=" + method + ", payDate=" + payDate
+				+ ", applyUser=" + applyUser + ", usedPoint=" + usedPoint + ", payCompleted=" + payCompleted + "]";
+	}
+	
+}

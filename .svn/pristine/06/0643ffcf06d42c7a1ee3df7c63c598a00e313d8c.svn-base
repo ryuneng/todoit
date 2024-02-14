@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="dailycheck" >
+ <!--  신규 출석체크를 저장한다. -->
+	<insert id="insertDailycheck" parameterClass="int">
+		insert into dailycheck
+			(dailycheck_date, user_no)
+		values
+			(to_char(sysdate, 'yyyy-mm-dd'), #value#)
+	</insert>
+	
+	<!-- 해당월의 월까지 가져오는것 -->
+	<select id="getDailychecks" parameterClass="int" resultClass="vo.DailyCheck">
+		select dailycheck_date as dailycheck,
+		       user_no as no
+		from dailycheck
+		where user_no = #value#
+		and dailycheck_date >= to_char(sysdate, 'yyyy-mm-') || '01'
+		
+	
+	</select>
+	<!-- 해당월의 년-월-일 까지 가져오는것 -->
+	<select id="getDailycheckByUserNo" parameterClass="int" resultClass="vo.DailyCheck">
+		select dailycheck_date as dailycheck,
+		       user_no as no
+		from dailycheck
+		where user_no = #value#
+		and dailycheck_date = to_char(sysdate, 'yyyy-mm-dd')
+		
+	
+	</select>
+
+</sqlMap>
+
+

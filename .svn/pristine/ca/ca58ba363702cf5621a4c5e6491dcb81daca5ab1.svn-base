@@ -1,0 +1,47 @@
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="vo.Meeting"%>
+<%@page import="vo.User"%>
+<%@page import="dao.WishDao"%>
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Wish"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	// 요청파라미터값 조회
+	int meetNo = Integer.valueOf(request.getParameter("meetNo"));
+	int currentPage = NumberUtils.toInt(request.getParameter("page"), 1);
+
+	// 유저 저장
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	// 모임 저장
+	Meeting meeting = new Meeting();
+	meeting.setNo(meetNo);
+
+	// 저장할 모임, 유저로 찜 생성
+	Wish wish = new Wish();
+	wish.setMeeting(meeting);
+	wish.setUser(user);
+	
+	WishDao wishDao = new WishDao();
+	// 이미 찜 되어 있는지 조회
+	Wish savedWish = wishDao.getWish(wish);
+
+	MeetingDao meetingDao = new MeetingDao();
+	
+	if(savedWish == null) {
+		// 동일한 찜 내역 없으면 addWish
+		wishDao.addWish(wish);
+		meetingDao.updateMeetingWishByNo(meeting);
+		response.sendRedirect("detail.jsp?meetNo=" + meetNo + "&page=" + currentPage + "&alert=wishAdd");
+	} else {
+		// 동일한 찜 내역 있으면 deleteWish
+		wishDao.deleteWish(wish);
+		meetingDao.updateMeetingWishByNo(meeting);
+		response.sendRedirect("detail.jsp?meetNo=" + meetNo + "&page=" + currentPage + "&alert=wishDelete");
+	}
+%>

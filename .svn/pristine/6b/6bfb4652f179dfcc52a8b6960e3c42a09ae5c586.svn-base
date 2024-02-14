@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="main">
+
+	<!-- 배너 -->
+	<select id="getBanner" resultClass="vo.Banner">
+		select
+				banner_no as no,
+				banner_image_name as imageName
+		from 	banner
+		where 	sysdate between banner_start_date  and banner_end_date
+	</select>
+	
+	<!-- 주간 인기 베스트 -->
+	<select id="getWeeklyBest" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no, 
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+				
+		from (select
+					meeting_address,
+					meeting_title,
+					score_average,
+					meeting_price,
+					meeting_discount_price
+		      from 	meeting
+		      where meeting_created_date >= TRUNC(SYSDATE) - 7
+			  order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+	
+	<!-- 스터디/자기계발 베스트 -->
+	<select id="getStudyCat" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no,
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+	    from (select
+	    			meeting_address,
+	    			meeting_title,
+	    			score_average,
+	    			meeting_price,
+	    			meeting_discount_price,
+	    			wish_cnt
+	          from meeting
+	          where meeting_category_no = 100001
+	          order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+	
+	<!-- 문화예술 베스트-->
+	<select id="getArtCat" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no,
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+	    from (select
+	    			meeting_address,
+	    			meeting_title,
+	    			score_average,
+	    			meeting_price,
+	    			meeting_discount_price,
+	    			wish_cnt
+	          from meeting
+	          where meeting_category_no = 100002
+	          order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+	
+	<!-- 운동/액티비티 베스트-->
+	<select id="getExerciseCat" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no,
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+	    from (select
+	    			meeting_address,
+	    			meeting_title,
+	    			score_average,
+	    			meeting_price,
+	    			meeting_discount_price,
+	    			wish_cnt
+	          from meeting
+	          where meeting_category_no = 100003
+	          order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+	
+	<!-- 취미 베스트-->
+	<select id="getHobbyCat" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no,
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+	    from (select
+	    			meeting_address,
+	    			meeting_title,
+	    			score_average,
+	    			meeting_price,
+	    			meeting_discount_price,
+	    			wish_cnt
+	          from meeting
+	          where meeting_category_no = 100004
+	          order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+	
+	<!-- 푸드 베스트-->
+	<select id="getFoodCat" resultClass="vo.Meeting">
+		select
+				meeting_no 				as no,
+				meeting_address 		as address,
+				meeting_title 			as title,
+				score_average 			as scoreAverage,
+				meeting_price 			as price,
+				meeting_discount_price 	as discountPrice
+	    from (select
+	    			meeting_address,
+	    			meeting_title,
+	    			score_average,
+	    			meeting_price,
+	    			meeting_discount_price,
+	    			wish_cnt
+	          from meeting
+	          where meeting_category_no = 100005
+	          order by wish_cnt desc)
+		where rownum &lt;= 12;
+	</select>
+
+</sqlMap>

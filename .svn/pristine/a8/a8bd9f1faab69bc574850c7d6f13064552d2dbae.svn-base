@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="community">
+
+	<insert id="insertCommunity" parameterClass="vo.Community">
+		insert into community
+		(comm_no, comm_title, comm_content, comm_category_no, 
+		 meeting_no, user_no, score, image_name)
+		values
+		(comm_seq.nextval, #title#, #content#, #category.no#, 
+		 #meeting.no#, #user.no#, #score#, #imageName#)
+	</insert>
+	
+	<select id="getAllMeetingsByUserNo" parameterClass="int" resultClass="vo.Meeting">
+		select
+			a.meeting_no 		as no,
+			c.meeting_title		as title
+		from 
+			apply_users A, users B, meeting C
+		where 
+			A.user_no = #value#
+			and A.user_no = B.user_no
+			and A.meeting_no = C.meeting_no
+	</select>
+	
+	<select id="getCommunityByNo" parameterClass="int" resultClass="vo.Community">
+		select
+			A.comm_no 				as no, 
+			A.comm_title			as title,
+			A.comm_content			as content,
+			A.comm_created_date		as createdDate,
+			A.comm_updated_date		as updatedDate,
+			A.comm_category_no 		as "category.no",
+			D.comm_category_name 	as "category.name",
+			A.meeting_no 			as "meeting.no",
+			B.meeting_title			as "meeting.title",
+			B.meeting_address       as "meeting.address",
+			A.user_no 				as "user.no",
+			C.user_nickname			as "user.nickname",
+			A.comm_like_cnt			as "likeCnt",
+			A.score					as "score",
+			A.image_name			as "imageName"
+		
+		from
+			community A,
+			meeting B,
+			users C,
+			comm_categories D		
+
+		where
+			A. meeting_no = B.meeting_no
+			and A.user_no = C.user_no
+			and A.comm_category_no = D.comm_category_no
+			and comm_no = #value#
+	</select>
+	
+	<update id="updateCommunity" parameterClass="vo.Community">
+		update
+    		community
+		set
+    		comm_title = #title#,
+    		comm_content = #content#,
+    		comm_view_cnt = #viewCnt#,
+    		comm_updated_date = sysdate,
+    		comm_deleted = #deleted#,
+    		comm_like_cnt = #likeCnt#,
+    		score = #score#,
+    		image_name = #imageName#
+		where 
+    		comm_no = #no#
+	</update>
+	
+	<!-- 게시글 목록 전체조회 -->
+	<select id="getCommunities" parameterClass="map" resultClass="vo.Community">
+		select
+			A.comm_no 		    as no,
+			A.comm_title 	    as title,
+			A.comm_content 	    as content,
+			A.comm_view_cnt     as viewCnt,
+			A.comm_created_date as createdDate,
+			A.comm_updated_date as updatedDate,
+			A.comm_deleted 	    as deleted,
+			B.meeting_no 	    as "meeting.no",
+			C.user_no 		    as "user.no",
+			C.user_name 		as "user.name",
+			A.comm_like_cnt     as likeCnt,
+			nvl(A.score, 0)     as score, <!-- score에 null이 들어있을 때 값을 0으로 -->
+			A.image_name        as imageName
+		from
+			(select
+				<isEqual property="sort" compareValue="date">
+					row_number() over (order by comm_no desc) num,
+				</isEqual>
+				<isEqual property="sort" compareValue="view">
+					row_number() over (order by comm_view_cnt desc) num,
+				</isEqual>
+				<isEqual property="sort" compareValue="like">
+					row_number() over (order by comm_like_cnt desc) num,
+				</isEqual>
+				comm_no,
+				comm_title,
+				comm_content,
+				comm_view_cnt,
+				comm_created_date,
+				comm_updated_date,
+				comm_deleted,
+				meeting_no,
+				user_no,
+				comm_like_cnt,
+				score,
+				image_name
+			 from
+			 	community
+			 where
+			 	comm_deleted = 'N'
+			 	<isNotNull property="categoryNo"> 				   <!-- categoryNo가 Null이 아니라면 이 쿼리가 사용되게 -->
+					and comm_category_no = #categoryNo#
+				</isNotNull>
+				<isEqual property="opt" compareValue="title"> 	<!-- if문 같은 기능(opt가 title일 때 내부작업 실행) -->
+			 		and comm_title like '%' || #keyword# || '%' <!-- like '%keyword%' : "keyword"가 포함되어 있는 모든 데이터 -->
+			 	</isEqual>										<!-- || : 여러 문자열을 연결하는 함수 -->
+			 	<isEqual property="opt" compareValue="writer">
+			 		and user_no in (select user_no
+			 						from users
+			 						where user_name like '%' || #keyword# || '%')
+			 	</isEqual>
+			 	<isEqual property="opt" compareValue="content">
+			 		and comm_content like '%' || #keyword# || '%'
+			 	</isEqual>
+			) A, meeting B, users C
+		where
+			A.num between #begin# and #end#
+			and A.user_no = C.user_no
+			and A.meeting_no = B.meeting_no
+	</select>
+	
+	<select id="getTotalRows" parameterClass="map" resultClass="int">
+		select
+			count (*)
+		from
+			community
+		where
+			comm_deleted = 'N'
+			<isNotNull property="categoryNo">
+				and comm_category_no = #categoryNo#
+			</isNotNull>
+			<isEqual property="opt" compareValue="title">
+				and comm_title like '%' || #keyword# || '%'
+			</isEqual>
+			<isEqual property="opt" compareValue="writer">
+				and user_no in (select user_no
+								from users
+								where user_name like '%' || #keyword# || '%')
+			</isEqual>
+			<isEqual property="opt" compareValue="content">
+				and comm_content like '%' || #keyword# || '%'
+			</isEqual>
+	</select>
+	
+</sqlMap>

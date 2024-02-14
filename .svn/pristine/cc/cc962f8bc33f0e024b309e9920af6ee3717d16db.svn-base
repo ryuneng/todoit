@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   	
+<sqlMap namespace="users">
+	
+	<select id="getUserById" parameterClass="string" resultClass="vo.User">
+		select
+			user_no 			as no,
+			user_id				as id,
+			user_password		as password,
+			user_birthdate		as birthDate,
+			user_nickname		as nickname,
+			user_gender			as gender,
+			user_status			as status,
+			user_name			as name,
+			user_email			as email,
+			user_tel			as tel,
+			user_createdate	    as createDate,
+			user_content		as content,
+			address_no			as address_no,
+			files_name			as files_name
+		from
+			users
+		where
+			user_id=#value#
+	</select>
+	
+	<delete id="deleteUserByNo" parameterClass="string">
+		delete from
+			users
+		where
+			user_no=#value#	
+	</delete>
+</sqlMap>

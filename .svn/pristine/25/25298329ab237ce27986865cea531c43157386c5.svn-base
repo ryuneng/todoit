@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="apply-users">
+	
+	<select id="getApplyByApplyUser" parameterClass="vo.ApplyUser" resultClass="vo.ApplyUser">
+		select
+			apply_no				as no,
+			apply_accepted			as accepted,
+			apply_accepted_date		as acceptedDate,
+			apply_refunded			as refunded,
+			apply_applied_date		as appliedDate,
+			user_no					as "user.no",
+			meeting_no				as "meeting.no",
+			apply_canceled_date		as canceledDate,
+			apply_canceled			as canceled
+        from
+        	apply_users
+        where
+        	meeting_no = #meeting.no#
+        and user_no = #user.no#
+	</select>
+</sqlMap>

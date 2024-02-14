@@ -1,0 +1,125 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<title>마이페이지::내일정관리</title>
+</head>
+<jsp:include page="../include/navbar.jsp">
+</jsp:include>
+<body>
+<div class="container">
+	<div class="row mt-3">
+		<div class="col-12">
+			<h1>일정관리</h1>
+		</div>
+	</div>
+		
+	<div class="row pt-4 mb-3">
+		<div class="col-3">
+			<jsp:include page="sidebar.jsp"></jsp:include>
+		</div>
+	
+		<div class="col-9">
+			<div class="row m-3">
+				<div class="col-12">
+					<h3>나의 캘린더</h3>
+					<p style="height:200px;">달력이 위치한다.</p>
+				</div>
+			</div>
+			
+			<div class="row mb-3">
+				<div class="col-6">
+					<div class="card">
+						<div class="card-header">
+							나의 참여모임
+							<a href="" class="btn btn-outline-primary btn-sm float-end">더보기</a>
+						</div>
+					  	<table class="table">
+					  		<colgroup>
+								<col width="50%">	
+								<col width="50%">	
+							</colgroup>
+					  		<thead>
+					  			<tr>
+					  				<th>모임이름</th>
+					  				<th>날짜</th>
+					  			</tr>
+					  		</thead>
+					  		<tbody>
+					  			<tr>
+					  				<td>볼링모임</td>
+					  				<td>2024.02.10</td>
+					  			</tr>
+					  			<tr>
+					  				<td>볼링모임</td>
+					  				<td>2024.02.10</td>
+					  			</tr>
+					  		</tbody>
+					  	</table>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="card">
+						<div class="card-header">
+							내가 만든모임
+							<a href="" class="btn btn-outline-primary btn-sm float-end">더보기</a>
+						</div>
+					   	<table class="table">
+					  		<colgroup>
+								<col width="75%">	
+							</colgroup>
+					  		<thead>
+					  			<tr>
+					  				<th>모임이름</th>
+					  				<th>날짜</th>
+					  			</tr>
+					  		</thead>
+					  		<tbody>
+					  			<tr>
+					  				<td>볼링모임</td>
+					  				<td>2024.02.10</td>
+					  			</tr>
+					  		</tbody>
+					  	</table>
+					</div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-header">
+							내가 찜한모임
+							<a href="../info/wishlist.jsp" class="btn btn-outline-primary btn-sm float-end">더보기</a>
+						</div>
+						<table class="table">
+					  		<colgroup>
+								<col width="50%">	
+								<col width="50%">	
+							</colgroup>
+					  		<thead>
+					  			<tr>
+					  				<th>모임이름</th>
+					  				<th>날짜</th>
+					  			</tr>
+					  		</thead>
+					  		<tbody>
+					  			<tr>
+					  				<td>볼링모임</td>
+					  				<td>2024.02.10</td>
+					  			</tr>
+					  		</tbody>
+					  	</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

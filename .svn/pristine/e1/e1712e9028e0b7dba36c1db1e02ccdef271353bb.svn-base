@@ -1,0 +1,65 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Meeting;
+
+public class MeetingDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	// 신규 모임 추가
+	public void insertMeeting(Meeting meeting) throws SQLException {
+		ibatis.insert("meeting.insertMeeting", meeting);
+	}
+	
+	// 모임번호로 모임 하나 조회
+	public Meeting getMeetingByNo(int no) throws SQLException {
+		return (Meeting)ibatis.queryForObject("meeting.getMeetingByNo", no);
+	}
+	
+	// 해당 모임 삭제여부 Y로 변경
+	public void deleteMeetingByMeetingNo(int no) throws SQLException {
+		ibatis.delete("meeting.deleteMeetingByMeetingNo", no);
+	}
+	
+	// 게시글의 전체 행 개수 반환
+	public int getTotalRows(Map<String, Object> param) throws SQLException {
+		return (Integer) ibatis.queryForObject(("meeting.getTotalRows"), param);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getRecommendMeetings(String sort, int begin, int end) throws SQLException {
+		Map<String, Object> param = new HashMap<>();
+		param.put("sort", sort);
+		param.put("begin", begin);
+		param.put("end", end);
+		
+		return (List<Meeting>) ibatis.queryForList("meeting.getMeetings", param);
+	}
+	
+	// 게시글 목록 반환
+	@SuppressWarnings("unchecked")
+	public List<Meeting> getMeetings(Map<String, Object> param) throws SQLException {
+		return (List<Meeting>) ibatis.queryForList("meeting.getMeetings", param);
+	}
+	
+	// 모임 찜 개수 추가
+	public void updateMeetingWishByNo(Meeting meeting) throws SQLException {
+		ibatis.update("meeting.updateMeetingWishByNo", meeting);
+	}
+	
+	public void updateMeetingByNo(Meeting meeting) throws SQLException {
+		ibatis.update("meeting.updateMeetingByNo", meeting);
+	}
+	
+	public void updateMeetingScoreByNo(Meeting meeting) throws SQLException {
+		ibatis.update("meeting.updateMeetingScoreByNo", meeting);
+	}
+}

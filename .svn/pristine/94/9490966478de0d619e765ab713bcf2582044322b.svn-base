@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="meeting-replies">
+
+	<!-- 댓글 저장 -->
+	<insert id="insertMeetingReply" parameterClass="vo.MeetingReply">
+		insert into meeting_replies
+    		(meeting_reply_no, meeting_reply_content, meeting_no, user_no)
+		values
+    		(MEETING_REPLIES_NO_SEQ.nextval, #content#, #meeting.no#, #user.no#)
+	</insert>
+	
+	<!-- 대댓글 저장 -->
+	<insert id="insertMeetingReReply" parameterClass="vo.MeetingReply">
+		insert into meeting_replies
+    		(meeting_reply_no, meeting_reply_content, meeting_no, user_no, meet_parents_reply)
+		values
+    		(MEETING_REPLIES_NO_SEQ.nextval, #content#, #meeting.no#, #user.no#, #partentsReply#)
+	</insert>
+	
+	<!-- 전체 댓글 조회 -->
+	<select id="getMeetingReplies" parameterClass="int" resultClass="vo.MeetingReply">
+		select
+    		r.meeting_reply_no 				as no, 
+    		r.meeting_reply_content			as content,
+    		r.meeting_reply_deleted         as deleted,
+    		r.meeting_reply_created_date    as createdDate,
+    		r.meeting_reply_updated_date    as updatedDate,
+    		r.meeting_danger_count          as dangerCount,
+    		r.meeting_no					as "meeting.no",
+    		r.user_no 				    	as "user.no",
+    		u.user_nickname			    	as "user.nickname",
+    		u.files_name					as "user.filename"
+ 		from
+    		meeting_replies r,
+    		users u
+		where
+    		r.meeting_no = #meeting.no#
+    		and r.user_no = u.user_no
+    		and r.meeting_reply_deleted = 'N'
+    		and r.meet_parents_reply is null
+		order by
+     		r.meeting_reply_no asc
+	</select>
+	
+	<!-- 댓글 삭제여부 Y로 변경 -->
+	<update id="deleteMeetingReply" parameterClass="int">
+		update
+			meeting_replies
+		set
+			meeting_reply_deleted = 'Y'
+		where
+			meeting_reply_no = #no#
+	</update>
+	
+	<!-- 모든 대댓글 조회 -->
+	<select id="getReReplies" parameterClass="int" resultClass="vo.MeetingReply">
+		select
+    		r.meeting_reply_no 			as no, 
+    		r.meeting_reply_content		as content,
+    		r.meeting_reply_deleted        as deleted,
+    		r.meeting_reply_created_date   as createdDate,
+    		r.meeting_reply_updated_date   as updatedDate,
+    		r.meeting_danger_count         as dangerCount,
+    		r.meeting_no					as "meeting.no",
+    		r.user_no 				    as "user.no",
+    		u.user_nickname			    as "user.nickname",
+    		r.meet_parents_reply			as partentsReply,
+    		u.files_name					as "user.filename"
+		from
+    		meeting_replies r,
+    		users u
+		where
+    		r.meet_parents_reply = #partentsReply#
+    		and r.user_no = u.user_no
+    		and r.meeting_reply_deleted = 'N'
+ 		order by
+     		r.meeting_reply_no asc
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateMeetingByNo" parameterClass="vo.MeetingReply">
+		update
+			meeting_replies
+		set	
+			meeting_reply_content = #content#,
+			meeting_reply_updated_date = sysdate,
+			meeting_no = #meeting.no#,
+			user_no = #user.no#,
+			meet_parents_reply = #partentsReply#
+		where
+			meeting_reply_no = #no#
+	</update>
+	
+	<!-- 댓글 번호로 1개 조회 -->
+	<select id="getReplyByNo" parameterClass="int" resultClass="vo.MeetingReply">
+		select
+    		r.meeting_reply_no				as no, 
+    		r.meeting_reply_content			as content,
+    		r.meeting_reply_deleted        	as deleted,
+    		r.meeting_reply_created_date   	as createdDate,
+    		r.meeting_reply_updated_date   	as updatedDate,
+    		r.meeting_danger_count         	as dangerCnt,
+    		r.meeting_no					as "meeting.no",
+    		r.user_no 				    	as "user.no",
+    		u.user_nickname			    	as "user.nickname"
+		from
+    		meeting_replies r,
+    		users u
+		where
+    		r.meeting_reply_no = #no#
+    		and r.user_no = u.user_no
+    		and r.meeting_reply_deleted = 'N'
+	</select>
+	
+	<!-- 댓글 신고 횟수 누적 -->
+	<update id="updateDangerCnt" parameterClass="vo.MeetingReply">
+		update
+			meeting_replies
+		set
+			meeting_danger_count = meeting_danger_count + 1
+		where
+			meeting_reply_no = #no#
+	</update>
+	
+	<!-- 댓글 신고내역 저장 -->
+	<insert id="addMeetReplyDangerCnt" parameterClass="vo.MeetReplyDanger">
+		insert into meet_reply_danger
+		(meeting_reply_no, user_no)
+		values
+		(#meetingReply.no#, #user.no#)
+	</insert>
+	
+	<!-- 이미 같은 유저가 신고한 적 있는지 조회 -->
+	<select id="getMeetReplyDanger" parameterClass="vo.MeetReplyDanger" resultClass="vo.MeetReplyDanger">
+		select meeting_reply_no as "meetingReply.no",
+			   user_no as "user.no"
+		from meet_reply_danger
+		where meeting_reply_no = #meetingReply.no#
+		and user_no = #user.no#
+	</select>
+	
+</sqlMap>

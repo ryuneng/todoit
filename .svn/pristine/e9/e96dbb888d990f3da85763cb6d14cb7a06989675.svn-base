@@ -1,0 +1,28 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.CommReply;
+
+public class CommReplyDao {
+
+private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	public void insertCommReply(CommReply commreply) throws SQLException {
+		ibatis.insert("comm-replies.insertCommReply", commreply);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommReply> getRepliesByCommunityNo(int commNo) throws SQLException {
+		return (List<CommReply>) ibatis.queryForList("comm-replies.getRepliesByCommunityNo", commNo);
+	}
+	
+	public void deleteCommReply(int replyNo) throws SQLException {
+		ibatis.insert("comm-replies.deleteCommReply", replyNo);
+	}
+	
+}

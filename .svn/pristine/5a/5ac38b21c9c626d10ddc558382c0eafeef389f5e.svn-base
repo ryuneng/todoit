@@ -1,0 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<% 
+	/*
+	요청URL
+		localhost/comn/delete.jsp
+	요청파라미터(요청메세지의 바디부)
+		id=xxx&password=xxx&name=xxx&email=xxx&tel=xxx
+	*/
+%>

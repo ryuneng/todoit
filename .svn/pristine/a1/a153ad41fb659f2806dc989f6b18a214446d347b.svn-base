@@ -1,0 +1,25 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Meeting;
+
+public class MeetingDao {
+
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	public void insertMeeting(Meeting meeting) throws SQLException {
+		ibatis.insert("meeting.insertMeeting", meeting);
+	}
+	
+	public Meeting getMeetingByNo(int no) throws SQLException {
+		return (Meeting)ibatis.queryForObject("meeting.getMeetingByNo", no);
+	}
+	
+	public void deleteMeetingByMeetingNo(int no) throws SQLException {
+		ibatis.delete("meeting.deleteMeetingByMeetingNo", no);
+	}
+}

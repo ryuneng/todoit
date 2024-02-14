@@ -1,0 +1,44 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<nav class="navbar navbar-expand-sm bg-dark border-bottom p-0" data-bs-theme="dark">
+   <div class="container-fluid">
+      <ul class="navbar-nav ms-auto">
+         <li class="nav-item">
+              <a class="nav-link" href="#">회원가입</a>
+         </li>
+         <li class="nav-item">
+              <a class="nav-link" href="#">로그인</a>
+         </li>
+         <li class="nav-item">
+              <a class="nav-link" href="#">로그아웃</a>
+         </li>
+         <li class="nav-item">
+              <a class="nav-link" href="#">마이페이지</a>
+         </li>
+         <li class="nav-item">
+              <a class="nav-link" href="#">공지사항</a>
+         </li>
+         <li class="nav-item">
+              <a class="nav-link" href="#">자주묻는질문</a>
+         </li>
+      </ul>
+   </div>
+</nav>
+<nav class="navbar navbar-expand-sm bg-light mb-3" >
+   <div class="container-fluid">
+      <img src="/resources/images/logo.png" alt="로고" style="float: left; margin-left: 100px; max-width: 200px; height: auto;" align="left">
+         <ul class="nav justify-content-end" style="padding-right: 100px;">
+
+           <li class="nav-item">
+             <a class="nav-link text-dark" href="#" style="font-size: 25px; margin-right: 30px;">참여하기</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link text-dark" href="#"  style="font-size: 25px; margin-right: 30px;">커뮤니티</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link text-dark" href="#"  style="font-size: 25px; margin-right: 30px;">이벤트</a>
+           </li>
+      	</ul>
+   </div>
+</nav>    

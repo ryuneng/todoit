@@ -1,0 +1,12 @@
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+/* 	LoginUser loginuser = (LoginUser) session.getAttribute("LOGIN_USER");
+	System.out.println(loginuser); */
+	String title = request.getParameter("title");
+	int maxPeople = NumberUtils.toInt(request.getParameter("maxPeople"));
+	
+	
+%>

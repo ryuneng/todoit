@@ -1,0 +1,59 @@
+package vo;
+
+import java.util.Date;
+
+public class Payment {
+	private int orderNo;
+	private int price;
+	private String method;
+	private Date payDate;
+	private ApplyUser applyUser;
+	private int usePoint;
+	
+	public Payment() {}
+	
+	public int getOrderNo() {
+		return orderNo;
+	}
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getMethod() {
+		return method;
+	}
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	public Date getPayDate() {
+		return payDate;
+	}
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
+	}
+	public ApplyUser getApplyUser() {
+		return applyUser;
+	}
+	public void setApplyUser(ApplyUser applyUser) {
+		this.applyUser = applyUser;
+	}
+	public int getUsePoint() {
+		return usePoint;
+	}
+	public void setUsePoint(int usePoint) {
+		this.usePoint = usePoint;
+	}
+	
+	@Override
+	public String toString() {
+		return "Payment [orderNo=" + orderNo + ", price=" + price + ", method=" + method + ", payDate=" + payDate + ", applyUser="
+				+ applyUser + ", usePoint=" + usePoint + "]";
+	}
+	
+	
+}

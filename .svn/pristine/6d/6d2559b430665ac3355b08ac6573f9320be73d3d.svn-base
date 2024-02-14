@@ -1,0 +1,33 @@
+<%@page import="dao.MeetingReplyDao"%>
+<%@page import="vo.MeetingReply"%>
+<%@page import="vo.User"%>
+<%@page import="utils.NumberUtils"%>
+<%@page import="dto.LoginUser"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	int meetNo = NumberUtils.toInt(request.getParameter("meetNo"));
+	int replyNo = NumberUtils.toInt(request.getParameter("replyNo"));
+	
+	User user = new User();
+	user.setNo(loginUser.getNo());
+	
+	MeetingReply savedReply = new MeetingReply();
+	MeetingReplyDao meetingReplyDao = new MeetingReplyDao();
+	
+	savedReply = meetingReplyDao.getReplyByNo(replyNo);
+	
+	if (savedReply.getUser().getNo() == loginUser.getNo()) {
+		// 댓글 작성자가 로그인한 유저일 경우 댓글 신고 불가
+		// 응답메세지로 에러메세지 같이 보내기
+		response.sendRedirect("detail.jsp?meetNo=" + meetNo + "&error=dangerFail");
+	} else {
+		meetingReplyDao.
+		response.sendRedirect("detail.jsp?meetNo=" + meetNo + "&error=dangerSuccess");
+	}
+	
+	meetingReplyDao.insertMeetingReply(meetingReply);
+	
+%>

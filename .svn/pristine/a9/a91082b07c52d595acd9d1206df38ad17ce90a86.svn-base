@@ -1,0 +1,14 @@
+<%@page import="dao.MeetingDao"%>
+<%@page import="vo.Wish"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+	Wish wish = new Wish();
+	int no = Integer.valueOf(request.getParameter("no"));
+	
+	MeetingDao meetingDao = new MeetingDao();
+	
+	meetingDao.updateMeetingWishByNo(no);
+	
+	response.sendRedirect("detail.jsp?no=" + no);
+%>

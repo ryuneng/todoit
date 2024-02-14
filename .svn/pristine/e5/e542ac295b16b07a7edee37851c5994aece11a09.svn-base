@@ -1,0 +1,64 @@
+package dao;
+
+import java.sql.SQLException;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.ApplyUser;
+import vo.Payment;
+
+public class PaymentDao {
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	// 1. 참여번호 시퀀스 획득
+	/**
+	 * 참여번호 시퀀스 획득
+	 * @return 참여번호 시퀀스
+	 * @throws SQLException
+	 */
+	public int getApplyNo() throws SQLException {
+		return (int) ibatis.queryForObject("payments.getApplyNo");
+	}
+	
+	// 2. 결제완료 후 참여정보 생성
+	/**
+	 * 결제완료 후 참여정보 생성
+	 * @param applyUser 참여정보
+	 * @throws SQLException
+	 */
+	public void insertApplyUser(ApplyUser applyUser) throws SQLException {
+		ibatis.insert("payments.insertApplyUser", applyUser);
+	}
+	
+	// 3. 결제정보 생성
+	/**
+	 * 결제정보 생성
+	 * @param payment 결제정보
+	 * @throws SQLException
+	 */
+	public void insertPayment(Payment payment) throws SQLException {
+		ibatis.insert("payments.insertPayment", payment);
+	}
+	
+	/**
+	 * 참여번호로 참여정보 1건 조회
+	 * @param applyUserNo 참여번호
+	 * @return 참여번호에 해당하는 참여정보
+	 * @throws SQLException
+	 */
+	public ApplyUser getApplyUserByNo(int applyUserNo) throws SQLException {
+		return (ApplyUser)ibatis.queryForObject("payments.getApplyUserByNo", applyUserNo);
+	}
+	
+	/**
+	 * 참여번호로 결제정보 1건 조회
+	 * @param applyUserNo 참여번호
+	 * @return 참여번호에 해당하는 결제정보
+	 * @throws SQLException
+	 */
+	public Payment getPaymentByApplyNo(int applyUserNo) throws SQLException {
+		return (Payment)ibatis.queryForObject("payments.getPaymentByApplyNo", applyUserNo);
+	}
+	
+}

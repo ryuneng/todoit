@@ -1,0 +1,310 @@
+<%@page import="vo.MeetingCategory"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.MeetingCategoryDao"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" ></script>
+<title>TODOIT :: 모임</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="meeting" name="menu"/>
+</jsp:include>
+<div class="container">
+<%
+	MeetingCategoryDao meetingCategoryDao = new MeetingCategoryDao();
+
+	List<MeetingCategory> meetingCategoryList = meetingCategoryDao.getAllCategories();
+%>
+	<!-- 상단 카테고리 영역 시작 -->
+	<div class="row">
+		<div class="col-12">
+			<ul class="nav justify-content-center nav-underline p-3 mb-3">
+			    <li class="nav-item">
+			        <a class="nav-link fs-5 active link-primary" href="list.jsp">전체</a>
+			    </li>
+<%
+	for (MeetingCategory meetingCategory : meetingCategoryList) {
+%>
+			    <li class="nav-item">
+			        <a class="nav-link fs-5 text-black link-primary" href="list.jsp?catNo=<%=meetingCategory.getNo()%>"><%=meetingCategory.getName() %></a>
+			    </li>
+<%
+	}
+%>
+			</ul>
+		</div>
+	</div>
+	<!-- 정렬/필터 시작 -->
+	<div class="row">
+		<div class="col-12">
+			<div class="d-flex justify-content-end my-3">
+				<select class="form-select" style="width:130px;" name="sort" onchange="changeRows()">
+					<option value="date">최신순</option>
+					<option value="date">인기순</option>
+					<option value="date">가격순</option>
+					<option value="date">평점순</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<!-- 컨텐츠 리스트 시작 -->
+	<div class="row p-3 mb-5">
+		<!-- 컨텐츠 1번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+				    	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					뇌새김 영어 데일리 챌린지
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 2번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+			        	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 3번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+				    	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					뇌새김 영어 데일리 챌린지
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 4번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+			        	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 5번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+				    	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					뇌새김 영어 데일리 챌린지
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 6번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+			        	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+		<!-- 컨텐츠 7번 -->
+		<div class="col-3 mb-3">
+			<div class="card p-3 mb-5 text-center" style="width: 18rem; height: 345px;">
+				<a href="detail.jsp" class="link-offset-2 link-underline link-underline-opacity-0">
+					<p class="card-text text-secondary text-start fw-bold mb-0">종로구</p>
+					<div class="card-text text-start text-secondary mb-3">
+						<small style="font-size: 12px;" >2024년 02월 01일</small>
+						<small style="font-size: 12px;">~ 2024년 03월 01일</small>
+					</div>
+				    <img src="../resources/images/community/user_1077114.png" class="mb-2" width="100" height="100" alt="...">
+				    <div class="card-body text-black text-start">
+			        	<h6 class="card-title fw-bold" style="height: 38px;
+			        										  display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;">
+    					[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자[주말 등산] 한국의 모든 산을 정복해보자
+    					</h6>
+				    	<div class="nav card-text justify-content-between mb-3">
+					        <small class="nav-item">★★★★★ 후기 19개</small>
+				        	<small class="nav-item text-danger">❤️</small>
+				        </div>
+				        <p class="card-text fw-bold">12,000원</p>
+				    </div>
+				</a>
+			</div>
+		</div>
+	</div>
+	<!-- 컨텐츠 리스트 끝 -->
+	<!-- 검색 시작 -->
+	<div class="row">
+		<div class="col-12">
+			<form id="form-search" class="row row-cols-sm-auto justify-content-start align-items-center mb-5"
+				  method="get"
+				  action="reviewList.jsp">
+				<input type="hidden" name="page" value="1" />
+				<input type="hidden" name="sort" value="1" />
+				<div class="col-12">
+					<select class="form-select" name="opt">
+						<option value="">선택</option>
+						<option value="title">제목</option>
+						<option value="writer">작성자</option>
+						<option value="content">내용</option>
+					</select>
+				</div>
+				<div class="col-12">
+					<input type="text" class="form-control" name="keyword" value="" />
+				</div>
+				<div class="col-12">
+					<button onclick="" type="submit" class="btn btn-outline-primary">검색</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 페이지네이션 시작 -->
+	<div class="row">
+		<div class="col-12">
+			<nav aria-label="Page navigation example">
+			  <ul class="pagination justify-content-center">
+			    <li class="page-item disabled">
+			      <a class="page-link"><</a>
+			    </li>
+			    <li class="page-item"><a class="page-link" href="#">1</a></li>
+			    <li class="page-item"><a class="page-link" href="#">2</a></li>
+			    <li class="page-item"><a class="page-link" href="#">3</a></li>
+			    <li class="page-item"><a class="page-link" href="#">4</a></li>
+			    <li class="page-item"><a class="page-link" href="#">5</a></li>
+			    <li class="page-item"><a class="page-link" href="#">6</a></li>
+			    <li class="page-item"><a class="page-link" href="#">7</a></li>
+			    <li class="page-item"><a class="page-link" href="#">8</a></li>
+			    <li class="page-item"><a class="page-link" href="#">9</a></li>
+			    <li class="page-item"><a class="page-link" href="#">10</a></li>
+			    <li class="page-item">
+			      <a class="page-link" href="#">></a>
+			    </li>
+			  </ul>
+			</nav>
+		</div>
+	</div>
+	<!-- 페이지네이션 끝 -->
+</div>
+</body>
+</html>

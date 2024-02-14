@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="community">
+
+	<insert id="insertCommunity" parameterClass="vo.Community">
+		insert into community
+		(comm_no, comm_title, comm_content, comm_category_no, 
+		 meeting_no, user_no, score, image_name)
+		values
+		(comm_seq.nextval, #title#, #content#, #category.no#, 
+		 #meeting.no#, #user.no#, #score#, #imageName#)
+	</insert>
+	
+	<select id="getAllMeetingsByUserNo" parameterClass="int" resultClass="vo.Meeting">
+		select
+			a.meeting_no 		as no,
+			c.meeting_title		as title
+		from 
+			apply_users A, users B, meeting C
+		where 
+			A.user_no = #value#
+			and A.user_no = B.user_no
+			and A.meeting_no = C.meeting_no
+	</select>
+	
+	<select id="getCommunityByNo" parameterClass="int" resultClass="vo.Community">
+		select
+			A.comm_no 				as no, 
+			A.comm_title			as title,
+			A.comm_content			as content,
+			A.comm_created_date		as createdDate,
+			A.comm_updated_date		as updatedDate,
+			A.comm_category_no 		as "category.no",
+			D.comm_category_name 	as "category.name",
+			A.meeting_no 			as "meeting.no",
+			B.meeting_title			as "meeting.title",
+			B.meeting_address       as "meeting.address",
+			A.user_no 				as "user.no",
+			C.user_nickname			as "user.nickname",
+			A.comm_like_cnt			as "likeCnt",
+			A.score					as "score",
+			A.image_name			as "imageName"
+		
+		from
+			community A,
+			meeting B,
+			users C,
+			comm_categories D		
+
+		where
+			A. meeting_no = B.meeting_no
+			and A.user_no = C.user_no
+			and A.comm_category_no = D.comm_category_no
+			and comm_no = #value#
+	</select>
+	
+	<update id="updateCommunity" parameterClass="vo.Community">
+		update
+    		community
+		set
+    		comm_title = #title#,
+    		comm_content = #content#,
+    		comm_view_cnt = #viewCnt#,
+    		comm_updated_date = sysdate,
+    		comm_deleted = #deleted#,
+    		comm_like_cnt = #likeCnt#,
+    		score = #score#,
+    		image_name = #imageName#
+		where 
+    		comm_no = #no#
+	</update>
+	
+</sqlMap>

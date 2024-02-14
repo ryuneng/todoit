@@ -1,0 +1,80 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" ></script>
+<title>TODOIT :: 결제하기</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="community" name="menu"/>
+</jsp:include>
+<div class="container" style="width: 700px">
+	<div class="row">
+		<div class="col-12">
+			<h4 class="fw-bold p-3 mb-3">모임 정보</h4>
+			<div class="d-flex justify-content-start">
+				<img alt="" src="../resources/images/meeting/user_1077114.png" width="120" height="120">
+				<div class="ms-5">
+					<small class="text-secondary">종로구</small>
+					<h6 class="fw-bold mt-1" style="display: -webkit-box;
+													overflow: hidden;
+												    text-overflow: ellipsis;
+												    -webkit-box-orient: vertical;
+												    -webkit-line-clamp: 1;">[주말 등산] 한국의 모든 산을 정복해보자 한국의 모든 산을 정복해보자 한국의 모든 산을 정복해보자</h6>
+					<small>2024년 02월 01일 ~ 2024년 03월 01일</small>
+					<p class="text-primary fw-bold mt-3">12,000원</p>
+				</div>
+			</div>
+			<hr>
+			<h4 class="fw-bold p-3 mb-3">예약자</h4>
+			<form class="border-0 bg-white p-3 ms-5" method="post" action="modify.jsp">
+				<div class="form-group d-flex justify-content-start mb-3">
+					<label class="form-label me-3" style="width: 48px">이름</label>
+					<input type="text" class="form-control" name="name" style="width: 300px"/>
+				</div>
+				<div class="form-group d-flex justify-content-start mb-3">
+					<label class="form-label me-3" style="width: 48px">연락처</label>
+					<input type="text" class="form-control" name="tel" style="width: 300px"/>
+				</div>
+				<div class="form-group d-flex justify-content-start mb-3">
+					<label class="form-label me-3" style="width: 48px">이메일</label>
+					<input type="text" class="form-control" name="email" style="width: 300px"/>
+				</div>
+				<div class="text-end">
+					<button type="submit" class="btn btn-primary">수정</button>
+				</div>
+			</form>
+			<hr>
+			<h4 class="fw-bold p-3 mb-3">안내사항</h4>
+			<div class="ms-5">
+				<p class="mb-5">
+					1. 집결 시간 꼭 지켜주세요.<br><br>
+					2. 불가피한 사정으로 참여하지 못할 경우, 최소 2일 전 연락주세요.<br><br>
+					3. 참여자 간에 기본적인 매너 지켜주세요!
+				</p>
+			</div>
+			<hr>
+			<h4 class="fw-bold p-3 mb-3">결제수단</h4>
+				<div class="form-check form-check-inline mb-3">
+					<input class="form-check-input" type="radio" name="payMethod" value="카카오페이">
+					<label class="form-check-label fw-bold" cheked>카카오페이</label>
+				</div>
+				<hr>
+				<div class="d-flex justify-content-between p-3 mb-5">
+					<h4 class="fw-bold">총 결제금액</h4>
+					<h5 class="text-primary fw-bold">12,000원</h5>
+				</div>
+				<div class="text-center text-secondary mb-3" style="font-size: 15px">위 내용을 모두 확인하였으며, 결제에 동의합니다.</div>
+				<div class="text-center">
+					<button type="submit" class="btn btn-primary" style="width: 100%">결제</button>
+				</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

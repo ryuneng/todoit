@@ -1,0 +1,47 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.CommReply;
+
+public class CommReplyDao {
+
+private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	public void insertCommReply(CommReply commreply) throws SQLException {
+		ibatis.insert("comm-replies.insertCommReply", commreply);
+	}
+	
+	// 대댓글 추가
+	public void insertCommReReply(CommReply rereply) throws SQLException {
+		ibatis.insert("comm-replies.insertCommReReply", rereply);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommReply> getRepliesByCommunityNo(int commNo) throws SQLException {
+		return (List<CommReply>) ibatis.queryForList("comm-replies.getRepliesByCommunityNo", commNo);
+	}
+	
+	public void deleteCommReply(int replyNo) throws SQLException {
+		ibatis.insert("comm-replies.deleteCommReply", replyNo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CommReply> getReReplies(int parentsNo) throws SQLException {
+		return (List<CommReply>) ibatis.queryForList("comm-replies.getReReplies", parentsNo);
+	}
+	
+	public void updateCommReply(CommReply commReply) throws SQLException {
+		ibatis.update("comm-replies.updateCommReply", commReply);
+	}
+	
+	// 댓글 1개 조회
+	public CommReply getReplyByNo(int replyNo) throws SQLException {
+		return (CommReply) ibatis.queryForObject("comm-replies.getReplyByNo", replyNo);
+	}
+	
+}

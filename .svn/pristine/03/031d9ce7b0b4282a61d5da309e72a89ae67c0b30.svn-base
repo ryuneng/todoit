@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="host">
+
+	<!--모임관리 현황-->
+	<select id="getHostStatus" parameterClass="int" resultClass="dto.MeetingStatusDto">
+		select
+			   meeting_no 					as no,
+			   count(*) 					meetingCnt,
+			   sum(meeting_total_pay_price) totalPrice,
+			   sum(meeting_actual_people) 	userCnt
+		from meeting
+		where user_no = #value#
+		and meeting_deleted = 'N'
+	</select>
+	
+	<!--모임관리 현황 상세-->
+	<select id="getHostStatusDetail" parameterClass="int" resultClass="vo.Meeting">
+		select 
+			   meeting_no    		 	as no,
+		       image_name    	     	as imageName,
+		       meeting_title 	     	as title,
+		       meeting_actual_people 	as actualPeople,
+		       meeting_total_pay_price  as totalPayPrice,
+		       meeting_view_cnt 		as viewCnt
+		       
+		from   meeting
+		where  user_no = #value#
+		and    meeting_deleted = 'N'
+	</select>
+	
+	<!--전체 알림-->
+	<select id="getAllNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select 
+				m.meeting_no 			as no,
+				m.image_name 			as imageName, 
+				m.meeting_title 		as title, 
+				a.apply_applied_date 	as day, 
+				'APPLY' 				as alertType
+		from    meeting m, apply_users a
+
+		where   m.user_no = #value#
+		and     meeting_approve = 'N'
+		and     m.meeting_no = a.meeting_no
+		union
+		select
+				m.meeting_no,
+				m.image_name,
+				m.meeting_title,
+				mr.meeting_reply_created_date, 
+				'REPLY'
+		from 	meeting m, meeting_replies mr
+		where 	m.user_no = #value#
+		and 	meeting_approve = 'N'
+		and 	m.meeting_no = mr.meeting_no
+	</select>
+	
+	<!--신청 알림-->
+	<select id="getApplyNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select 
+				m.meeting_no 			as no,
+				m.image_name 			as imageName, 
+				m.meeting_title 		as title, 
+				a.apply_applied_date 	as day, 
+				'APPLY' 				as alertType
+		from    meeting m, apply_users a
+
+		where   m.user_no = #value#
+		and     meeting_approve = 'N'
+		and     m.meeting_no = a.meeting_no
+		
+	</select>
+	<!--댓글 알림-->
+	<select id="getReplyNotices" parameterClass="int" resultClass="dto.MeetingNoticeDto">
+		select
+				m.meeting_no as no,
+				m.image_name as imageName,
+				m.meeting_title as title,
+				mr.meeting_reply_created_date as day, 
+				'REPLY' as alertType
+		from 	meeting m, meeting_replies mr
+		where 	m.user_no = #value#
+		and 	meeting_approve = 'N'
+		and 	m.meeting_no = mr.meeting_no
+	</select>
+	
+	<!-- 호스트 모임 달력 -->
+	<select id="getHostCalendar" parameterClass="int" resultClass="vo.Meeting">
+	 select
+	 		meeting_no  		as no,
+	 		meeting_title 		as title,
+	 		meeting_start_date 	as startDate,
+	 		meeting_end_date 	as endDate,
+	 	    meeting_address 	as address,
+	 	    meeting_latitude 	as latitude
+	 	    meeting_longitude 	as longitude
+ 	from 	meeting
+ 	where 	user_no = #value#
+    and meeting_deleted = 'N'
+    </select>
+    
+    <!-- 모임관리 타이틀-->
+    <select id="getHostTitle" parameterClass="int" resultClass="vo.Meeting">
+    select
+    		meeting_no 		as no,
+    		image_name 		as imageName,
+    		meeting_title 	as title,
+ 	from meeting
+ 	where user_no = #value#
+ 	and meeting_deleted = 'N'
+ 	</select>
+ 	
+ 	<!-- 모임관리 참여자 -->
+ 	<select id="getHostApplies" parameterClass="int" resultClass="dto.ApplyManagementDto">
+	 select
+	 		u.user_nickname 	 as nickname,
+	 		a.apply_applied_date as appliedDate,
+	 		a.apply_accepted  	 as accepted,
+	 		p.pay_completed 	 as payCompleted
+	 from users u, apply_users a, payments p ,meeting m 
+	 where m.user_no = #value#
+	 and a.user_no = u.user_no
+	 and a.apply_no = p.apply_no
+	 and u.user_no = m.user_no
+  	and meeting_deleted = 'N'
+  	</select>
+  	
+  	<!-- 모임관리 댓글-->
+  	<select id="getHostReplies" parameterClass="int" resultClass="dto.ReplyManagementDto">
+	select
+			mr.meeting_reply_no as no,
+			u.files_name as filename,
+			u.user_nickname as nickname,
+			mr.meeting_reply_created_date as createdDate,
+			mr.meeting_reply_updated_date as updatedDate
+	 from users u, meeting_replies mr
+	 where mr.user_no = #value#
+	 and mr.meeting_no = #value#
+	 and u.user_no = mr.user_no
+ </select>
+</sqlMap>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   
+<sqlMap namespace="meet-reply-like">
+	
+	<select id="getLike" parameterClass="vo.MeetingReplyLike" resultClass="vo.MeetingReplyLike">
+		select meeting_reply_no as "meetingReply.no",
+			   user_no as "user.no"
+		from meeting_reply_likes
+		where meeting_reply_no = #meetingReply.no#
+		and user_no = #user.no#
+	</select>
+	
+	<select id="getLikes" parameterClass="int" resultClass="int">
+		select count(*)
+		from meeting_reply_likes
+		where meeting_reply_no = #replyNo#
+	</select>
+	
+	<insert id="addReplyLike" parameterClass="vo.MeetingReplyLike">
+		insert into meeting_reply_likes
+		(meeting_reply_no, user_no)
+		values
+		(#meetingReply.no#, #user.no#)
+	</insert>
+	
+	<delete id="deleteReplyLike" parameterClass="vo.MeetingReplyLike">
+		delete from meeting_reply_likes
+		where meeting_reply_no = #meetingReply.no#
+		and user_no = #user.no#
+	</delete>
+	
+</sqlMap>

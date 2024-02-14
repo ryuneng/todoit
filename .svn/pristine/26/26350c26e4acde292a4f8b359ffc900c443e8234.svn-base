@@ -1,0 +1,118 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet">
+<style>
+@font-face {
+    font-family: 'NanumSquareNeo-Variable';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+  font-family: 'NanumSquareNeo-Variable';
+}
+</style>
+<title>TODOIT:프로필 상세</title>
+</head>
+<body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="" name=""/>
+</jsp:include>
+<div class="container">
+	<div class="row mb-3">
+		<div class="col-3">
+			<img src="/resources/images/user/1706857214526meeting.jpg" class="img-thumbnail" alt="...">
+		</div>
+		<div class="col-8">
+			<table class="table">
+				<colgroup>
+					<col width="20%">
+					<col width="80%">
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>닉네임</th><td>홍길동이</td>
+					</tr>
+					<tr>
+						<th>자기소개</th><td>앞서 이중근 부영그룹 회장은 출산장려금 기부에 대해서는 세제 혜택을 주자는 제안을 내놓기도 했다. 기부금 수령자에게는 면세 대상으로 삼아 다른 소득과 합산 처리하지 말자는 것이다. 또 기부자에게도 소득 공제 혜택을 부여해 기부금 확대를 꾀하자고 제안했다.
+
+그러나 이같은 기업의 증여 방식의 출산장려금이 일반화되기는 어렵다는 지적이 나온다. 출산장려금을 임금으로 봐야 하는지 논란의 여지가 있을 수 있다. 또 기부금 방식을 통해 세금이 빠져나가는 등 뜻밖의 부작용도 생길 수 있다.
+
+그러나 저출산 위기가 심화되고 있어 예외적으로 정책을 수립할 여지도 있다. 기획재정부 관계자는 이 회장의 제안에 대해 "(가능 여부에 대해) 내부적으로 검토해 따져볼 것"이라고 했다.
+
+한편 한국의 저출산 대응 예산은 해마다 증가해 2022년 50조원을 넘겼다. 국회예정처가 발표한 ‘인구위기 대응을 위한 저출산 정책 및 재정사업 분석’ 보고서에 따르면, 한국의 저출산 대응 예산은 2006년 2조1000억원에서 2012년 11조1000억원, 2016년 21조4000억원, 2022년 51조7000억원으로 점차 늘었다.</td>
+					</tr>
+					<tr class="align-middle">
+						<th>팔로잉</th>
+						<th>팔로워</th>
+					</tr>
+					<tr>
+						<td>5명</td>
+						<td>2명</td>
+					</tr>
+					<tr>
+						<td><a href="" class="btn btn-outline-primary btn-sm ms-3">팔로잉</a><td>
+					</tr>
+				</tbody>
+			</table>
+		
+		</div>
+	</div>
+	
+	<!-- 내가 개설한 모임 리스트 -->
+	<div class="row">
+		<div class="col-12">
+			<div class="card ">
+				<div class="card-header">홍길동이 개설한 모인</div>
+				<div class="card-body">
+					<table class="table table-bordered">
+						<colgroup>
+							<col width="60%">
+							<col width="20%">
+							<col width="20%">
+						</colgroup>
+						<thead>
+					        <tr>
+					            <th>이름</th>
+					            <th>참여자 수</th>
+					            <th>모집인원 수</th>
+					        </tr>
+					    </thead>
+					    <tbody>
+					    	<tr>
+					    		<td>짱 좋은 독서모임</td>
+					    		<td>13 명</td>
+					    		<td>20 명</td>
+					    	</tr>
+					    	<tr>
+					    		<td>짱 좋은 독서모임</td>
+					    		<td>13 명</td>
+					    		<td>20 명</td>
+					    	</tr>
+					    	<tr>
+					    		<td>짱 좋은 독서모임</td>
+					    		<td>13 명</td>
+					    		<td>20 명</td>
+					    	</tr>
+					    	<tr>
+					    		<td>짱 좋은 독서모임</td>
+					    		<td>13 명</td>
+					    		<td>20 명</td>
+					    	</tr>
+					    </tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

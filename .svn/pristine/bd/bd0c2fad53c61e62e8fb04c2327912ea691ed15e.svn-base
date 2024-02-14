@@ -1,0 +1,27 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import ibatis.IbatisUtil;
+import vo.Addresses;
+
+public class AddressesDao {
+	private SqlMapClient ibatis = IbatisUtil.getSqlMapClient();
+	
+	@SuppressWarnings("unchecked")
+	public List<Addresses> getAddressesByCityName() throws SQLException {
+		return (List<Addresses>) ibatis.queryForList("addresses.getAddressesByCityName");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Addresses> getAddressesByguName(int address_no2) throws SQLException {
+		return (List<Addresses>) ibatis.queryForList("addresses.getAddressesByguName", address_no2);
+	}
+	
+}
+
+
+

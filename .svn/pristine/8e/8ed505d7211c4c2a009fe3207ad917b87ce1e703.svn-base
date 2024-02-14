@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+   	
+<sqlMap namespace="address">
+	
+	<select id="getAddressByCityName" resultClass="vo.Addresses">
+		select
+			address_no		as no,  
+			city_name
+		from
+			Addresses
+		where
+			address_no in (100,200,300,400,500,600,700,800)
+			
+	</select>
+	
+	<select id="getAddressByguName" parameterClass="int" resultClass="vo.Addresses">
+		select
+			address_no		as no,
+			gu_name				
+			
+		from
+			Addresses
+        where
+           address_no2 = #value#
+        and
+           gu_name is not null
+			
+	</select>
+	
+	
+</sqlMap>

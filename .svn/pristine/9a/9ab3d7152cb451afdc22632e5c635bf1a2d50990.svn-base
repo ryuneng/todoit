@@ -1,0 +1,61 @@
+<%@page import="vo.ApplyUser"%>
+<%@page import="vo.Payment"%>
+<%@page import="dao.PaymentDao"%>
+<%@page import="dto.LoginUser"%>
+<%@page import="utils.DateUtils"%>
+<%@page import="java.util.List"%>
+<%@page import="org.apache.tomcat.jakartaee.commons.lang3.math.NumberUtils"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" ></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<title>TODOIT :: 결제완료</title>
+</head>
+<body>
+<jsp:include page="/include/navbar.jsp">
+	<jsp:param value="community" name="menu"/>
+</jsp:include>
+<%
+LoginUser loginUser = (LoginUser) session.getAttribute("LOGIN_USER");
+
+	// 요청파라미터값 조회
+	int applyNo = Integer.parseInt(request.getParameter("applyNo"));
+	
+	// 1. 요청파라미터값으로 받아온 참여번호를 참여정보에 저장
+	ApplyUser applyUser = new ApplyUser();
+	applyUser.setNo(applyNo);
+	
+	// 2. 결제정보에 참여정보 저장
+	Payment payment = new Payment();
+	payment.setApplyUser(applyUser);
+	
+	// 3. 참여번호로 결제정보 1건 조회
+	PaymentDao paymentDao = new PaymentDao();
+	paymentDao.getPaymentByNo(applyNo);
+	
+	System.out.println(payment);
+%>
+<div class="container">
+	<div class="row">
+		<div class="col-12 text-center">
+			<h1 class="mt-5 pt-5 mb-5" style="font-size: 60px">
+				<i class="bi bi-check-circle-fill text-primary"></i>
+			</h1>
+			<div class="mb-5 pb-5">
+				<h2><font class="text-primary">결제</font>가 완료되었습니다.</h2>
+			</div>
+			<div> <!-- 왜 안나올까? -->
+				<p>결제번호 <%=payment.getOrderNo() %></p>
+			</div>
+			<a href="/info/meetlist.jsp" class="btn btn-primary" style="width: 15%; font-size: 17px;">결제내역 확인</a>
+		</div>
+	</div>
+</div>
+</body>
+</html>
